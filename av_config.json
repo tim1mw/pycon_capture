@@ -1,0 +1,1 @@
+{"video_format": "v4l2", "framerate": "25", "video_size": "720x576", "video_codec": "h264", "video_bitrate": "2000k", "video_scale": "1024x576", "video_sync": "1", "video_device": "/dev/video1", "audio_format": "pulse", "audio_codec": "libmp3lame", "audio_bitrate": "256k", "audio_sync": "1", "audio_device": "default"}
