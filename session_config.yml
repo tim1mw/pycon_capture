@@ -1,0 +1,6 @@
+conference_year: 2017
+session_metadata_db: db.sqlite3
+session_metadata_path: /usr/local/src/pycon/2017/pyconuk_website/
+test_day: ''
+test_time: ''
+video_title_prefix: PYCON UK

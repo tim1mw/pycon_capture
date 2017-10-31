@@ -1,2 +1,6 @@
 .ipynb_checkpoints
 *.ts
+.DS_Store
+.idea
+__pycache__
+.python-version
