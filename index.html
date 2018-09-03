@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+    <title>Pycon capture</title>
+    <link href="static/video-js.min.css" rel="stylesheet" />
+    <link href="static/style-cam.css" rel="stylesheet" />
+    <script type='text/javascript' src="static/video.min.js"></script>
+    <script type='text/javascript'>
+
+        videojs.Hls.GOAL_BUFFER_LENGTH = 6;
+        videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
+
+        window.addEventListener("load", function () {
+            player = videojs('videojs-player');
+        });
+    </script>
+</head>
+<body>
+
+<h1>Pycon Capture</h1>
+
+<h3>Recording monitor</h3>
+
+<video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444"
+    data-setup='{
+        "controls": true,
+        "autoplay": true,
+        "controlBar": { "muteToggle": true, "volume": true }}'>
+    <source src="live/video.m3u8" type="application/x-mpegURL">
+</video>
+
+
+</body>
+</html>
