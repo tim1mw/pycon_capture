@@ -1,6 +1,7 @@
 import os, sys
 import web
 import json
+import urllib2
 from subprocess import Popen, PIPE
 
 
@@ -22,6 +23,8 @@ class index:
             return self.saveNewTimeIndex(data)
         if data['action'] == 'ffmpeg':
             return self.makeFFmpegScript();
+        if data['action'] == 'schedule':
+            return self.getScheduleData()
 
     def saveNewTimeIndex(self, data):
         file = open("recordings/current.txt", "r")
@@ -85,7 +88,10 @@ class index:
         file.close()
 
         return json.dumps({"ok":True})
-
+        
+    def getScheduleData(self):
+        response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/')
+        return response.read()
 
 if __name__ == "__main__":
     app = web.application(urls, globals())

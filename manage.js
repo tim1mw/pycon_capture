@@ -2,7 +2,7 @@ var data={};
 var currentData={};
 var timeData={};
 
-readJSONURL("schedule.json", setCurrentData);
+readJSONURL("code.py/?action=schedule", setCurrentData);
 
 
 // Methods
