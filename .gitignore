@@ -3,4 +3,6 @@
 live/*
 recordings/*
 config.js
+web scraper/files/*
+*.db
 timedata.json
