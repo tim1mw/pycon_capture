@@ -7,7 +7,7 @@ xmlhttp.onreadystatechange = function() {
         start();
     }
 };
-xmlhttp.open("GET", "data.json", true);
+xmlhttp.open("GET", "schedule.json", true);
 xmlhttp.send(); 
 
 var currentData={};
