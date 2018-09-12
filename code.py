@@ -17,18 +17,20 @@ urls = (
 class index:
 
     def GET(self, stuff):
-
         data = web.input(action="none",id=None)
+        if data['action'] == 'start' or data['action'] == 'end':
+            return self.saveNewTimeIndex(data)
+        if data['action'] == 'ffmpeg':
+            return self.makeFFmpegScript();
+
+    def saveNewTimeIndex(self, data):
         file = open("recordings/current.txt", "r")
         filename = file.read()
         pyDict = {"id":data['id'], "name": filename}
 
         timecode = self.readTimeCode()
 
-        datastore = {}
-        if os.path.exists("recordings/timedata.json"):
-            jsondatafile = open("recordings/timedata.json", "r")
-            datastore = json.loads(jsondatafile.read())
+        datastore = self.readTimecodeJSON()
 
         if data['id'] not in datastore:
             datastore[data['id']] = {}
@@ -48,7 +50,7 @@ class index:
         try:
             proc = Popen('./get_recording_time.sh', stdout=PIPE, stderr=PIPE)
             out, err = proc.communicate()
-            return out.decode("utf-8").strip(' \t\n\r')
+            return out.decode("utf-8").strip()
 
         except Exception as inst:
             print type(inst)     # the exception instance
@@ -56,6 +58,33 @@ class index:
             print inst           # __str__ allows args to be printed directly
 
         return "--:--:--"
+
+    def readTimecodeJSON(self):
+        if os.path.exists("recordings/timedata.json"):
+            jsondatafile = open("recordings/timedata.json", "r")
+            return json.loads(jsondatafile.read())
+
+        return {};
+
+
+    def makeFFmpegScript(self):
+        datastore = self.readTimecodeJSON()
+        script = ""
+        for item in datastore:
+            # The strip() on the timecode read seems have no effect, but it works when I do it here,
+            # so repeat to make sure we have no whitespace junk
+            script += "ffmpeg -i \""+datastore[item]['file'].strip()+"\""
+            script += " -ss "+datastore[item]['start']
+            script += " -to "+datastore[item]['end']
+            script += " -c copy -async 1"
+            script += " "+item+".mp4"
+            script += "\n\n"
+            
+        file = open("recordings/ffmpeg-script.sh", 'w')
+        file.write(script)
+        file.close()
+
+        return json.dumps({"ok":True})
 
 
 if __name__ == "__main__":

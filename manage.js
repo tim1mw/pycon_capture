@@ -106,3 +106,16 @@ function setEndCallback(data) {
     document.getElementById('end_'+data['id']).value = data['end'];
     document.getElementById('name_'+data['id']).value = data['name'];
 }
+
+function makeFFmpegScript() {
+    var url="code.py/?action=ffmpeg";
+    readJSONURL(url, ffmpegCallback);
+}
+
+function ffmpegCallback(data) {
+    if (data['ok']) {
+        alert("FFMPEG Script created");
+    } else {
+        alert("Error creating FFMPEG Script");
+    }
+}
