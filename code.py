@@ -1,12 +1,13 @@
 import os, sys
+import web
+import json
+from subprocess import Popen, PIPE
+
 
 abspath = os.path.dirname(__file__)
 sys.path.append(abspath)
 os.chdir(abspath)
-import web
-import json
 
-from subprocess import Popen, PIPE
 
 
 urls = (
@@ -18,15 +19,28 @@ class index:
     def GET(self, stuff):
 
         data = web.input(action="none",id=None)
-        file = open("recordings/current.txt", "r") 
-        pyDict = {"id":data['id'], "name": file.read()}
+        file = open("recordings/current.txt", "r")
+        filename = file.read()
+        pyDict = {"id":data['id'], "name": filename}
 
-        if data['action'] == 'start':
-            pyDict['start'] = self.readTimeCode()
+        timecode = self.readTimeCode()
 
-        if data['action'] == 'end':
-            pyDict['end'] = self.readTimeCode()
-       
+        datastore = {}
+        if os.path.exists("recordings/timedata.json"):
+            jsondatafile = open("recordings/timedata.json", "r")
+            datastore = json.loads(jsondatafile.read())
+
+        if data['id'] not in datastore:
+            datastore[data['id']] = {}
+            
+        datastore[data['id']][data['action']] = timecode
+        datastore[data['id']]['file'] = filename
+        
+        with open("recordings/timedata.json", 'w') as f:
+            json.dump(datastore, f, indent=4, sort_keys=True)
+
+        pyDict[data['action']] = timecode
+
         web.header('Content-Type', 'application/json')
         return json.dumps(pyDict)
 
@@ -34,9 +48,7 @@ class index:
         try:
             proc = Popen('./get_recording_time.sh', stdout=PIPE, stderr=PIPE)
             out, err = proc.communicate()
-            print("stdout: " + out.decode("utf-8"))
-            print("stderr: " + err.decode("utf-8"))
-            return out.decode("utf-8")
+            return out.decode("utf-8").strip(' \t\n\r')
 
         except Exception as inst:
             print type(inst)     # the exception instance

@@ -24,7 +24,7 @@ function readJSONURL(url, callBack) {
 
 function setCurrentData(data) {
     currentData = data[currentDate]['matrix'];
-    readJSONURL("timedata.json", readTimeData);
+    readJSONURL("recordings/timedata.json", readTimeData);
 }
 
 function readTimeData(data) {
