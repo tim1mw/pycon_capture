@@ -217,7 +217,7 @@ title.pack()
 T = Text(root, height=20, width=200, wrap=WORD)
 T.pack()
 quote = """Example Abstract: This is an example abstract that
-will be displayed by default it there is no database"""
+will be displayed by default if there is no database"""
 
 title.insert(END, "Test title")
 T.insert(END, quote)
