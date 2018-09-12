@@ -3,4 +3,4 @@
 live/*
 recordings/*
 config.js
-schedule.js
+schedule.json
