@@ -6,8 +6,8 @@ rm -rf live
 mkdir live
 
 prefix=video
-suffix=$(date +%Y-%m-%d-%H:%M:%S)
-filename=$prefix.$suffix.ts
+suffix=$(date +%Y-%m-%d-%H_%M_%S)
+filename=$prefix-$suffix.ts
 
 rm -f recordings/current.txt
 
