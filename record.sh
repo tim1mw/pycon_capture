@@ -5,7 +5,7 @@
 rm -rf live
 mkdir live
 
-prefix=test
+prefix=video
 suffix=$(date +%Y-%m-%d-%H:%M:%S)
 filename=$prefix.$suffix.ts
 
