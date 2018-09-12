@@ -9,6 +9,10 @@ prefix=test
 suffix=$(date +%Y-%m-%d-%H:%M:%S)
 filename=$prefix.$suffix.ts
 
+rm -f recordings/current.txt
+
+echo $filename > recordings/current.txt
+
 ffmpeg -f v4l2 \
  -i /dev/video1 \
  -f pulse -i default \
