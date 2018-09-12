@@ -24,12 +24,16 @@ function start() {
       }
       if (item['room'] == currentRoom && !item['break_event']) {
         console.log(item);
-        html+="<p>Title:"+item['title']+"<br />"+
-          "Presenters: "+item['name']+"<br />"+
-          "Start: "+item['time']+"<br />"+
-          "End: "+item['end_time']+"<br />"+
-          
-          "</p>";
+        html+="<p class='title'>Title:"+item['title']+"</p>"+
+          "<p>Presenter(s): "+item['name']+"<br />"+
+          "Schedule Time: "+item['time']+" to "+item['end_time']+"<br />"+
+          "ical_id: "+item['ical_id']+"<br />"+
+          "Recording File: <input type='text' name='name_"+item['ical_id']+"' size='20' /><br />"+
+          "Start time index:  <input type='text' name='start_"+item['ical_id']+"' size='8' /><br />"+
+          "End time index:  <input type='text' name='end_"+item['ical_id']+"' size='8' /><br /><br />"+
+          "<a href='javascript:setStart(\""+item['ical_id']+"\")' class='markbutton'>Mark Presenation Start</a>&nbsp;&nbsp;&nbsp;"+
+          "<a href='javascript:setEnd(\""+item['ical_id']+"\")' class='markbutton'>Mark Presenation End</a>"+
+          "<hr /></p>";
       }
     }
   }

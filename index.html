@@ -1,6 +1,6 @@
 <!doctype html>
 <head>
-    <title>Pycon capture</title>
+    <title>PyCon capture</title>
     <link href="static/video-js.min.css" rel="stylesheet" />
     <link href="static/style-cam.css" rel="stylesheet" />
     <script type='text/javascript' src="static/video.min.js"></script>
@@ -15,6 +15,19 @@
     </script>
     <script type='text/javascript' src='config.js'></script>
     <script type='text/javascript' src='manage.js'></script>
+    <style>
+        .markbutton {
+            border: 1px solid grey;
+            background-color: #eeeeee;
+            color: #000000;
+            text-decoration:none;
+        }
+
+        .title {
+            font-weight:bold;
+            font-size:large;
+        }
+    </style>
 </head>
 <body>
 
@@ -22,7 +35,7 @@
 
 <h3>Recording monitor</h3>
 
-<video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444"
+<video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" style="float:right;" width="790" height="444"
     data-setup='{
         "controls": true,
         "autoplay": true,
@@ -30,10 +43,9 @@
     <source src="live/video.m3u8" type="application/x-mpegURL">
 </video>
 
-
-<!-- <p><a href="code.py/" target="_blank">Open management interface</a></p> -->
-
-<div id="schedule" style="margin-top:20px;height:250px;overflow-y:scroll"></div>
+<form>
+<div id="schedule" style="float:left;margin-top:0px;height:444px;width:420px;overflow-y:scroll;overflow-x:auto;border:1px solid black;"></div>
+</form>
 
 </body>
 </html>
