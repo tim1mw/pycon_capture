@@ -2,3 +2,4 @@
 *.ts
 live/*
 recordings/*
+config.js
