@@ -13,6 +13,8 @@
             player = videojs('videojs-player');
         });
     </script>
+    <script type='text/javascript' src='config.js'></script>
+    <script type='text/javascript' src='manage.js'></script>
 </head>
 <body>
 
@@ -28,7 +30,10 @@
     <source src="live/video.m3u8" type="application/x-mpegURL">
 </video>
 
-<p><a href="code.py/" target="_blank">Open management interface</a></p>
+
+<!-- <p><a href="code.py/" target="_blank">Open management interface</a></p> -->
+
+<div id="schedule" style="margin-top:20px;height:250px;overflow-y:scroll"></div>
 
 </body>
 </html>

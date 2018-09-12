@@ -2,8 +2,8 @@
 
 # -aspect 16:9
 
-rm -rf static/recordings/live
-mkdir static/recordings/live
+rm -rf live
+mkdir live
 
 prefix=test
 suffix=$(date +%Y-%m-%d-%H:%M:%S)
