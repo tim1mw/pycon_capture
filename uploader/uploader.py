@@ -7,6 +7,57 @@ import argparse
 
 root = Tk()
 
+def unicodetoascii(text): # should probably sort encoding out rather than do this
+
+    TEXT = (text.
+    		replace('\\xe2\\x80\\x99', "'").
+            replace('\\xc3\\xa9', 'e').
+            replace('\\xe2\\x80\\x90', '-').
+            replace('\\xe2\\x80\\x91', '-').
+            replace('\\xe2\\x80\\x92', '-').
+            replace('\\xe2\\x80\\x93', '-').
+            replace('\\xe2\\x80\\x94', '-').
+            replace('\\xe2\\x80\\x94', '-').
+            replace('\\xe2\\x80\\x98', "'").
+            replace('\\xe2\\x80\\x9b', "'").
+            replace('\\xe2\\x80\\x9c', '"').
+            replace('\\xe2\\x80\\x9c', '"').
+            replace('\\xe2\\x80\\x9d', '"').
+            replace('\\xe2\\x80\\x9e', '"').
+            replace('\\xe2\\x80\\x9f', '"').
+            replace('\\xe2\\x80\\xa6', '...').
+            replace('\\xe2\\x80\\xb2', "'").
+            replace('\\xe2\\x80\\xb3', "'").
+            replace('\\xe2\\x80\\xb4', "'").
+            replace('\\xe2\\x80\\xb5', "'").
+            replace('\\xe2\\x80\\xb6', "'").
+            replace('\\xe2\\x80\\xb7', "'").
+            replace('\\xe2\\x81\\xba', "+").
+            replace('\\xe2\\x81\\xbb', "-").
+            replace('\\xe2\\x81\\xbc', "=").
+            replace('\\xe2\\x81\\xbd', "(").
+            replace('\\xe2\\x81\\xbe', ")").
+            replace("\\'", "'").  # un-escape single quotes/apostrophes
+            replace("\\r", "\r").
+            replace("\\n", "\n").
+            replace('\\xe2\\x80\\x99', "'").# why wasnt this one already included?
+            replace("\\xc2\\xa0", " ").
+            replace("\\xc3\\xa4", "ä"). # can you pass these as a param?
+            replace("\\xc5\\x81", "Ł").
+            replace("\\xc4\\x85", "ą").
+            replace("\\xc3\\xa1", "á").
+            replace("\\xc2\\xa3", "£").
+            replace("\\xc3\\xb6", "ö").
+            replace("\\xc3\\xa7", "ç").
+            replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
+            replace("\\xc4\\xb1", "ı") # dotless i
+
+    )
+
+    if "\\" in TEXT:
+        print("************************************************************************\n"+TEXT)
+
+    return TEXT
 
 def button_pushed():
     print("button")
@@ -48,7 +99,7 @@ def callback(*args):
         print("input list: "+str(inputed_list))
         current_state['day'] = inputed_list[6]
         current_state['room'] = inputed_list[5]
-        current_state['talk'] = inputed_list[2]
+        current_state['talk'] = unicodetoascii(inputed_list[2])
 
     print("*** State change ***")
     print("Day: " + current_state['day'])
@@ -66,9 +117,9 @@ def callback(*args):
 
     possible_talk_list = []
     for item in possible_talks:
-        possible_talk_list.append(item[0])
+        possible_talk_list.append(unicodetoascii(item[0]))
 
-    print("Possible talks: "+str(possible_talks))
+    print("Possible talks: "+str(possible_talk_list))
 
     # Clear dropdown
     dropdown3['menu'].delete(0, 'end')
@@ -145,7 +196,7 @@ def callback(*args):
     description_string += first_row_list[11]
 
     T.delete(1.0, END)
-    T.insert(END, description_string)
+    T.insert(END, unicodetoascii(description_string))
 
 
 def upload():
@@ -179,10 +230,6 @@ def upload():
     description_text = abstract
     description_text = description_text.strip("\n")  # trim top and bottom
     description_text = description_text.replace('"', '\\"')  # escape double quotes
-    description_text = description_text.replace("\\'", "'")  # un-escape single quotes/apostrophes
-    description_text = description_text.replace("\\xe2\\x80\\x93", "-")  # encoding woes
-    description_text = description_text.replace("\\r", "\r")
-    description_text = description_text.replace("\\n", "\n")
 
     function_call = ""
     function_call += "youtube-upload "
@@ -248,7 +295,7 @@ def upload_program(ical_param, filename_param):
 
     talk_list = []
     for item in talk_tuples:
-        talk_list.append(item[0])
+        talk_list.append(unicodetoascii(item[0]))
 
     talk_list.sort()
     print(talk_list)
