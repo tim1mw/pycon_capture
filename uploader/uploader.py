@@ -94,7 +94,7 @@ def callback(*args):
     query = "SELECT *  FROM schedule WHERE day_field ="+parsed_day+" AND room ="+parsed_room+" AND title ="+parsed_talk+""
     selected_metadata_raw = cursor.execute(query).fetchall()
 
-    print(selected_metadata_raw)
+    #  print(selected_metadata_raw)
     if selected_metadata_raw == []:
         first_row_list = []
         print("*** NO MATCHING TALKS ***")
@@ -155,6 +155,7 @@ def upload():
 
     # TODO - exec this
     # TODO be mindfull of escaping special chars
+
     '''
         youtube-upload \
         --title="A.S. Mutter" 
@@ -172,19 +173,26 @@ def upload():
 
     abstract = T.get(1.0, END)
 
-    #with open('description.txt', 'w') as file:  # Use file to refer to the file object
-
-     #   file.write(abstract.strip("\n"))
+    # Alternating single and double quotes
+    # The actual command is called in bash using double quotes
+    # so we need to escape double quotes, but-un escape single quotes
+    description_text = abstract
+    description_text = description_text.strip("\n")  # trim top and bottom
+    description_text = description_text.replace('"', '\\"')  # escape double quotes
+    description_text = description_text.replace("\\'", "'")  # un-escape single quotes/apostrophes
+    description_text = description_text.replace("\\xe2\\x80\\x93", "-")  # encoding woes
+    description_text = description_text.replace("\\r", "\r")
+    description_text = description_text.replace("\\n", "\n")
 
     function_call = ""
     function_call += "youtube-upload "
     #function_call += 'youtube-upload '
     function_call += '--title="'+new_title[:-1]+'" ' # added so apostrophe can be present - trim last newline
 
-    function_call += '--client-secrets=client_id.json '
+    function_call += '--client-secrets=../../client_id.json '
     # apostrophes can be present, need to test newlines and slashes
     # function_call += '--description="$(< description.txt)" '
-    function_call += '--description="' + abstract.strip("\n") + '" '
+    function_call += '--description="' + description_text + '" '
     function_call += '--tags="python, programming, pycon, pyconuk" '
     function_call += '--default-language="en" --default-audio-language="en" '
 
@@ -196,7 +204,9 @@ def upload():
     function_call += '--privacy private '
     function_call += file_name
 
-    print(function_call)
+    if '\\' in description_text or '\\' in new_title:
+
+        print("\n\n"+new_title)
     os.system(function_call)
 
 def upload_program(ical_param, filename_param):
