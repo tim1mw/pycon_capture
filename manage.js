@@ -1,7 +1,17 @@
-var data={};
+var rawdata={};
 var currentData={};
 var timeData={};
 var rendered=[];
+
+var dcookie = getCookie("date");
+if (dcookie != "") {
+    currentDate = dcookie;
+}
+
+var rcookie = getCookie("room");
+if (rcookie != "") {
+    currentRoom = rcookie;
+}
 
 readJSONURL("code.py/?action=schedule", setCurrentData);
 
@@ -24,6 +34,7 @@ function readJSONURL(url, callBack) {
 }
 
 function setCurrentData(data) {
+    rawdata = data;
     currentData = data[currentDate]['matrix'];
     readJSONURL("recordings/timedata.json", readTimeData);
 }
@@ -31,7 +42,6 @@ function setCurrentData(data) {
 function readTimeData(data) {
     timeData = data;
     render();
-    activePres();
     setInterval(activePres, 30000);
 }
 
@@ -55,8 +65,46 @@ function activePres() {
     }
 }
 
+function dateChange() {
+    currentDate = document.getElementById('datechoice').value;
+    setCookie("date", currentDate, 100);
+    currentData = rawdata[currentDate]['matrix'];
+    rendered=[];
+    render();
+}
+
+function roomChange() {
+    currentRoom = document.getElementById('roomchoice').value;
+    setCookie("room", currentRoom, 100);
+    rendered=[];
+    render();
+}
+
 function render() {
-  var html="";
+  var html="<div style='padding-top:2px;padding-bottom:6px;margin-top:10px;margin-left:2px;margin-right:2px;margin-bottom:10px;border:2px solid black;'>"+
+      "<p style='font-weight:bold;font-size:large;'>PyCon Capture - Schedule Choice</p>"+
+      "Date: <select name='date' id='datechoice' onChange='dateChange()'>";
+
+  for (index in rawdata) {
+      if (index == currentDate) {
+          html += "<option value='"+index+"' selected>"+index+"</option>";
+      } else {
+          html += "<option value='"+index+"'>"+index+"</option>";
+      }
+  }
+  html += "</select><br />"+
+      "Room: <select name='room' id='roomchoice' onchange='roomChange()'>";
+
+  for (index in rawdata[currentDate]['rooms']) {
+      var item = rawdata[currentDate]['rooms'][index];
+      if (item == currentRoom) {
+          html += "<option value='"+item+"' selected>"+item+"</option>";
+      } else {
+          html += "<option value='"+item+"'>"+item+"</option>";
+      }
+  }
+
+  html += '</select><br /></div>';
 
   for (index in currentData) {
     for (index2 in currentData[index]) {
@@ -94,6 +142,7 @@ function render() {
   }
 
   setElementHTML("schedule", html);
+  activePres();
 }
 
 
@@ -144,4 +193,27 @@ function ffmpegCallback(data) {
     } else {
         alert("Error creating FFMPEG Script");
     }
+}
+
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
 }
