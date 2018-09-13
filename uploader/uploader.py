@@ -50,8 +50,8 @@ def unicodetoascii(text): # should probably sort encoding out rather than do thi
             replace("\\xc3\\xb6", "ö").
             replace("\\xc3\\xa7", "ç").
             replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
-            replace("\\xc4\\xb1", "ı") # dotless i
-
+            replace("\\xc4\\xb1", "ı"). # dotless i
+            replace("\\xc5\\xa1", "š")
     )
 
     if "\\" in TEXT:
@@ -378,12 +378,12 @@ if __name__ == '__main__':
     if args.filename_param:
         filename_param = args.filename_param
     else:
-        #filename_param = "talk_video.mp4"
-        filename_param ="/home/glen442/git_repos/pycon_capture/big_buck_bunny_720p_10mb.flv"
+        filename_param = "talk_video.mp4"
+        #filename_param ="/home/glen442/git_repos/pycon_capture/big_buck_bunny_720p_10mb.flv"
 
     if args.ical_param:
         ical_param = args.ical_param
     else:
-        #ical_param = "no_value"
-        ical_param = "0b96" # lightning talks
+        ical_param = "no_value"
+        #ical_param = "0b96" # lightning talks
         upload_program(ical_param, filename_param)

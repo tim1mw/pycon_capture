@@ -53,13 +53,25 @@ def unicodetoascii(text): # should probably sort encoding out rather than do thi
     #        replace("\\xc3\\xb6", "ö").
     #        replace("\\xc3\\xa7", "ç").
     #        replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
-    #        replace("\\xc4\\xb1", "ı") # dotless i
-
+    #        replace("\\xc4\\xb1", "ı"). # dotless i
+    #        replace("\\xc5\\xa1", "š")
 
     )
-    if "\\" in TEXT:
+    if "\\" in TEXT: # print them for info
         #TEXT = TEXT.decode("utf8")
-        print(TEXT)
+        if "\\xc3\\xa4" in TEXT\
+        or "\\xc5\\x81" in TEXT\
+        or "\\xc4\\x85" in TEXT\
+        or "\\xc3\\xa1" in TEXT\
+        or "\\xc2\\xa3" in TEXT\
+        or "\\xc3\\xb6" in TEXT\
+        or "\\xc3\\xa7" in TEXT\
+        or "\\xc4\\xb1" in TEXT\
+        or "\\xc5\\xa1" in TEXT\
+        or "\\xe2\\x84\\xa2" in TEXT:
+            pass
+        else:
+            print(TEXT)
 
     return TEXT
 
