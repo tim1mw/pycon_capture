@@ -21,6 +21,7 @@ ffmpeg -f v4l2 -framerate 25 \
  -preset ultrafast \
  -vf scale=1280x720 \
  -ab 256k \
+ -async 1 -vsync 1 \
  -bsf:v h264_mp4toannexb \
  -async 1 -vsync 1 \
  -movflags empty_moov+omit_tfhd_offset+frag_keyframe+default_base_moof \
