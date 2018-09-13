@@ -60,7 +60,7 @@ function activePres() {
             ele.style.border='4px solid red';
         } else {
             ele.style.background='#eeeeee';
-            ele.style.colour='2px solid black';
+            ele.style.border='2px solid black';
         }
     }
 }
