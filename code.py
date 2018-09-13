@@ -97,7 +97,8 @@ class index:
             file.write(schedule)
             file.close()
             return schedule
-        except urllib2.URLError as err: 
+        except :
+            print("Using cached schedule...");
             schedulecache = open("recordings/schedule.json", 'r')
             return schedulecache.read()
 
