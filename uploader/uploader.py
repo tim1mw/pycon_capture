@@ -2,8 +2,10 @@ from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
 import sqlite3
+import os
 
 root = Tk()
+
 
 def button_pushed():
     print("button")
@@ -15,8 +17,8 @@ def button_pushed():
 
 def callback(*args):
 
-    #print(args)
-    #print(args[0])
+    # print(args)
+    # print(args[0])
 
     # fires as the vars are being set up, so 'day' will fire before 'talk' exists.
     # we don't care about them until they are all inited, so skip accessing them until they all exist
@@ -29,7 +31,7 @@ def callback(*args):
         current_state['day'] = ""
         current_state['room'] = ""
         current_state['talk'] = ""
-        return # do nothing until everything has been intited
+        return  # do nothing until everything has been intited
 
     print("*** State change ***")
     print("Day: " + current_state['day'])
@@ -38,10 +40,11 @@ def callback(*args):
 
     parsed_day = "'"+current_state['day']+"'"
     parsed_room = "'"+current_state['room']+"'"
-    parsed_talk = "'"+current_state['talk']+"'"
+    parsed_talk = current_state['talk'].replace("'", "''")
+    parsed_talk = "'"+parsed_talk+"'"
 
-    #print(parsed_day+" "+ parsed_room)
-    # TODO escape special characters in parameters
+    # print(parsed_day+" "+ parsed_room)
+
     possible_talks = cursor.execute(f"SELECT DISTINCT title FROM schedule WHERE day_field ={parsed_day} AND room ={parsed_room}").fetchall()
 
     possible_talk_list = []
@@ -132,18 +135,44 @@ def upload():
 
     # TODO - exec this
     # TODO be mindfull of escaping special chars
-'''
- youtube-upload \
-  --title="A.S. Mutter" 
-  --description="A.S. Mutter plays Beethoven" \
-  --tags="python, programming, pycon, pyconuk" \
-  --default-language="en" \
-  --default-audio-language="en" \
-  --client-secrets=my_client_secrets.json \
-  --credentials-file=my_credentials.json \
-  --private\
-  <path/filename>
-'''
+    '''
+        youtube-upload \
+        --title="A.S. Mutter" 
+        --description="A.S. Mutter plays Beethoven" \
+        --tags="python, programming, pycon, pyconuk" \
+        --default-language="en" --default-audio-language="en" \
+        --client-secrets=my_client_secrets.json \
+        --credentials-file=my_credentials.json \
+        --private\
+        <path/filename>
+    '''
+
+    new_title = title.get(1.0, END)
+    abstract = T.get(1.0, END)
+    file_name = filename_text.get(1.0, END)
+
+    function_call = ""
+    function_call += "youtube-upload "
+    # function_call += 'youtube-upload '
+    function_call += '--title="'+new_title[:-1]+'" ' # added so apostrophe can be present - trim last newline
+
+    # apostrophes can be present, need to test newlines and slashes
+    function_call += '--description="'+abstract.strip("\n").replace("\n","\\n")+'" ' # TODO description newlines
+    # function_call += '--description="' + abstract.strip("\n") + '" '
+    function_call += '--tags="python, programming, pycon, pyconuk" '
+    function_call += '--default-language="en" --default-audio-language="en" '
+
+    # function_call += '--client-secrets=my_client_secrets.json '
+    function_call += '--client-secrets=client_id.json '
+
+    # function_call += '--credentials-file=my_credentials.json '
+
+    function_call += '--privacy private '
+    function_call += file_name
+
+    print(function_call)
+    os.system(function_call)
+
 
 db = sqlite3.connect('mydb.db')
 cursor = db.cursor()
