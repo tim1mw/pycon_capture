@@ -86,8 +86,8 @@ function render() {
           "Recording File: <input type='text' id='name_"+item['ical_id']+"' name='name_"+item['ical_id']+"' size='20' value='"+file+"' readonly /><br />"+
           "Start time index:  <input type='text' id='start_"+item['ical_id']+"' name='start_"+item['ical_id']+"' size='8' value='"+startTime+"' readonly /><br />"+
           "End time index:  <input type='text' id='end_"+item['ical_id']+"' name='end_"+item['ical_id']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
-          "<a href='javascript:setStart(\""+item['ical_id']+"\")' class='markbutton'>Mark Presenation Start</a>&nbsp;&nbsp;&nbsp;"+
-          "<a href='javascript:setEnd(\""+item['ical_id']+"\")' class='markbutton'>Mark Presenation End</a>"+
+          "<a href='javascript:setStart(\""+item['ical_id']+"\")' class='markbutton'>Mark Presentation Start</a>&nbsp;&nbsp;&nbsp;"+
+          "<a href='javascript:setEnd(\""+item['ical_id']+"\")' class='markbutton'>Mark Presentation End</a>"+
           "</p></div>";
       }
     }
