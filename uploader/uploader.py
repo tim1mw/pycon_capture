@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter.filedialog import askopenfilename
 import sqlite3
 import os
+import argparse
 
 root = Tk()
 
@@ -17,7 +18,7 @@ def button_pushed():
 
 def callback(*args):
 
-    # print(args)
+    #print(args)
     # print(args[0])
 
     # fires as the vars are being set up, so 'day' will fire before 'talk' exists.
@@ -32,6 +33,21 @@ def callback(*args):
         current_state['room'] = ""
         current_state['talk'] = ""
         return  # do nothing until everything has been intited
+
+    if args[-1] == "no_value" or args[-1] == "w": # if we didn't get a parameter proceed with defaults
+        print("args to callback: "+args[-1])
+
+    else: # else change state to passed param
+        passed_param = cursor.execute(f"SELECT *  FROM schedule WHERE file LIKE '{args[-1].upper()}%'").fetchall()
+        print("Passed param entry: "+ str(passed_param[0]))
+
+        inputed_list = []
+        for param in passed_param[0]:  # first row of returned possibilities
+            inputed_list.append(param)
+        print("input list: "+str(inputed_list))
+        current_state['day'] = inputed_list[6]
+        current_state['room'] = inputed_list[5]
+        current_state['talk'] = inputed_list[2]
 
     print("*** State change ***")
     print("Day: " + current_state['day'])
@@ -66,6 +82,9 @@ def callback(*args):
     # if current_state[talk] is a member of possible talks, replace list, but set entry to current_state[talk]
     if current_state['talk'] in possible_talk_list:
         # TODO talks that have multiple entries might have problems (eg lightning talks)
+        # passes param doesnt rigger event in the same way - set dropdown explicitly
+        dropdown3_var.set(possible_talk_list[possible_talk_list.index(current_state['talk'])])
+        # dropdown3_var.set(possible_talk_list[0]) # find which entry current state talk is
         pass
     else:
         dropdown3_var.set(possible_talk_list[0])
@@ -173,95 +192,130 @@ def upload():
     print(function_call)
     os.system(function_call)
 
+def upload_program(ical_param, filename_param):
 
-db = sqlite3.connect('mydb.db')
-cursor = db.cursor()
+    global db
+    db = sqlite3.connect('mydb.db')
 
-current_state = {
-  "day": "",
-  "room": "",
-  "talk": ""
-}
-day_tuples = set(cursor.execute('SELECT day_field FROM schedule').fetchall())
+    global cursor
+    cursor = db.cursor()
 
-day_list = []
-for item in day_tuples:
-    day_list.append(item[0])
+    global current_state
+    current_state = {
+      "day": "",
+      "room": "",
+      "talk": ""
+    }
+    day_tuples = set(cursor.execute('SELECT day_field FROM schedule').fetchall())
 
-day_list.sort(key = lambda x: x.split(" ")[-1]) # split by space, then sort by last field (ie day number)
-print(day_list)
+    day_list = []
+    for item in day_tuples:
+        day_list.append(item[0])
 
-room_tuples = set(cursor.execute('SELECT room FROM schedule').fetchall())
+    day_list.sort(key = lambda x: x.split(" ")[-1]) # split by space, then sort by last field (ie day number)
+    print(day_list)
 
-room_list = []
-for item in room_tuples:
-    room_list.append(item[0])
+    room_tuples = set(cursor.execute('SELECT room FROM schedule').fetchall())
 
-room_list.sort()
-print(room_list)
+    room_list = []
+    for item in room_tuples:
+        room_list.append(item[0])
 
-talk_tuples = set(cursor.execute('SELECT title FROM schedule').fetchall()) # will include dupes
+    room_list.sort()
+    print(room_list)
 
-talk_list = []
-for item in talk_tuples:
-    talk_list.append(item[0])
+    talk_tuples = set(cursor.execute('SELECT title FROM schedule').fetchall()) # will include dupes
 
-talk_list.sort()
-print(talk_list)
+    talk_list = []
+    for item in talk_tuples:
+        talk_list.append(item[0])
 
-# not realy needed, but helps mental model.
-DAY_OPTIONS = day_list
-ROOM_OPTIONS = room_list
-TALK_OPTIONS = talk_list
+    talk_list.sort()
+    print(talk_list)
 
-dropdown1_var = StringVar(root)
-dropdown1_var.trace("w", callback)
-dropdown1_var.set(DAY_OPTIONS[0]) # default value
-current_state['day'] = DAY_OPTIONS[0]
+    # not realy needed, but helps mental model.
+    DAY_OPTIONS = day_list
+    ROOM_OPTIONS = room_list
+    TALK_OPTIONS = talk_list
 
-dropdown1 = OptionMenu(root, dropdown1_var, *tuple(DAY_OPTIONS))
-#dropdown1 = apply(OptionMenu, (root, dropdown1_var) + tuple(DAY_OPTIONS))
-dropdown1.pack()
+    global dropdown1_var
+    dropdown1_var = StringVar(root)
+    dropdown1_var.trace("w", callback)
+    dropdown1_var.set(DAY_OPTIONS[0]) # default value
+    current_state['day'] = DAY_OPTIONS[0]
 
-dropdown2_var = StringVar(root)
-dropdown2_var.trace("w", callback)
-dropdown2_var.set(ROOM_OPTIONS[0]) # default value
-current_state['room'] = ROOM_OPTIONS[0]
+    global dropdown1
+    dropdown1 = OptionMenu(root, dropdown1_var, *tuple(DAY_OPTIONS))
+    #dropdown1 = apply(OptionMenu, (root, dropdown1_var) + tuple(DAY_OPTIONS))
+    dropdown1.pack()
 
-dropdown2 = OptionMenu(root, dropdown2_var, *tuple(ROOM_OPTIONS))
-dropdown2.pack()
+    global dropdown2_var
+    dropdown2_var = StringVar(root)
+    dropdown2_var.trace("w", callback)
+    dropdown2_var.set(ROOM_OPTIONS[0]) # default value
+    current_state['room'] = ROOM_OPTIONS[0]
 
-dropdown3_var = StringVar(root)
-dropdown3_var.trace("w", callback)
-#dont set default value
-#dropdown3_var.set(TALK_OPTIONS[0]) # default value
-#current_state['talk'] = TALK_OPTIONS[0]
+    global dropdown2
+    dropdown2 = OptionMenu(root, dropdown2_var, *tuple(ROOM_OPTIONS))
+    dropdown2.pack()
 
-dropdown3 = OptionMenu(root, dropdown3_var, *tuple(TALK_OPTIONS))
-dropdown3.pack()
+    global dropdown3_var
+    dropdown3_var = StringVar(root)
+    dropdown3_var.trace("w", callback)
+    #dont set default value
+    #dropdown3_var.set(TALK_OPTIONS[0]) # default value
+    #current_state['talk'] = TALK_OPTIONS[0]
 
-title = Text(root, height=2, width=200, wrap=WORD)
-title.pack()
+    global dropdown3
+    dropdown3 = OptionMenu(root, dropdown3_var, *tuple(TALK_OPTIONS))
+    dropdown3.pack()
 
-T = Text(root, height=20, width=200, wrap=WORD)
-T.pack()
-quote = """Example Abstract: This is an example abstract that
-will be displayed by default if there is no database"""
+    global title
+    title = Text(root, height=2, width=200, wrap=WORD)
+    title.pack()
 
-title.insert(END, "Test title")
-T.insert(END, quote)
+    global T
+    T = Text(root, height=20, width=200, wrap=WORD)
+    T.pack()
+    quote = """Example Abstract: This is an example abstract that
+    will be displayed by default if there is no database"""
 
-filename_text = Text(root, height=2, width=200, wrap=WORD)
-filename_text.pack()
+    title.insert(END, "Test title")
+    T.insert(END, quote)
 
-filename_text.insert(END, "video.mp4")
+    global filename_text
+    filename_text = Text(root, height=2, width=200, wrap=WORD)
+    filename_text.pack()
 
-b = Button(root, text="File Picker", command=button_pushed)
-b.pack()
+    filename_text.insert(END, filename_param)
 
-u = Button(root, text="Upload", command=upload)
-u.pack()
+    b = Button(root, text="File Picker", command=button_pushed)
+    b.pack()
 
-callback("lol")
+    u = Button(root, text="Upload", command=upload)
+    u.pack()
 
-mainloop()
+    callback(ical_param)
+
+    mainloop()
+
+
+if __name__ == '__main__':
+
+    #if called by another scipt, should be provided with a file and an ical entry
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--ical_param")
+    parser.add_argument("--filename_param")
+    args = parser.parse_args()
+
+    if args.filename_param:
+        filename_param = args.filename_param
+    else:
+        filename_param = "talk_video.mp4"
+
+    if args.ical_param:
+        ical_param = args.ical_param
+    else:
+        ical_param = "no_value"
+        # ical_param = "0b96" # lightning talks
+        upload_program(ical_param, filename_param)
