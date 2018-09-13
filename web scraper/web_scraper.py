@@ -6,6 +6,63 @@ import os
 from os.path import isfile, join
 import sqlite3
 
+def unicodetoascii(text): # should probably sort encoding out rather than do this
+
+    TEXT = (text.
+    		replace('\\xe2\\x80\\x99', "'").
+            replace('\\xc3\\xa9', 'e').
+            replace('\\xe2\\x80\\x90', '-').
+            replace('\\xe2\\x80\\x91', '-').
+            replace('\\xe2\\x80\\x92', '-').
+            replace('\\xe2\\x80\\x93', '-').
+            replace('\\xe2\\x80\\x94', '-').
+            replace('\\xe2\\x80\\x94', '-').
+            replace('\\xe2\\x80\\x98', "'").
+            replace('\\xe2\\x80\\x9b', "'").
+            replace('\\xe2\\x80\\x9c', '"').
+            replace('\\xe2\\x80\\x9c', '"').
+            replace('\\xe2\\x80\\x9d', '"').
+            replace('\\xe2\\x80\\x9e', '"').
+            replace('\\xe2\\x80\\x9f', '"').
+            replace('\\xe2\\x80\\xa6', '...').
+            replace('\\xe2\\x80\\xb2', "'").
+            replace('\\xe2\\x80\\xb3', "'").
+            replace('\\xe2\\x80\\xb4', "'").
+            replace('\\xe2\\x80\\xb5', "'").
+            replace('\\xe2\\x80\\xb6', "'").
+            replace('\\xe2\\x80\\xb7', "'").
+            replace('\\xe2\\x81\\xba', "+").
+            replace('\\xe2\\x81\\xbb', "-").
+            replace('\\xe2\\x81\\xbc', "=").
+            replace('\\xe2\\x81\\xbd', "(").
+            replace('\\xe2\\x81\\xbe', ")").
+            replace("\\'", "'").  # un-escape single quotes/apostrophes
+            replace("\\r", "\r").
+            replace("\\n", "\n").
+            replace('\\xe2\\x80\\x99', "'").# why wasnt this one already included?
+            replace("\\xc2\\xa0", " ")
+
+    # leave these to be replaced in uploader, as it makes it easier to edit if we cant pass params
+
+
+    #        replace("\\xc3\\xa4", "ä"). # can you pass these as a param?
+    #        replace("\\xc5\\x81", "Ł").
+    #        replace("\\xc4\\x85", "ą").
+    #        replace("\\xc3\\xa1", "á").
+    #        replace("\\xc2\\xa3", "£").
+    #        replace("\\xc3\\xb6", "ö").
+    #        replace("\\xc3\\xa7", "ç").
+    #        replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
+    #        replace("\\xc4\\xb1", "ı") # dotless i
+
+
+    )
+    if "\\" in TEXT:
+        #TEXT = TEXT.decode("utf8")
+        print(TEXT)
+
+    return TEXT
+
 
 def get_talk_page(href):
     my_file = Path("files/"+href[15:19]+"_"+href[20:])
@@ -188,11 +245,11 @@ for file in onlyfiles:
             cursor.execute('''INSERT INTO schedule(file, title,
                             subtitle, authors, room, day_field, time_field, slot_list, proposal_type, abstract_text, difficulty_flags)
                           VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (row[0], row[1],
-                        row[2], row[3],
+                       (row[0], unicodetoascii(row[1]),
+                        unicodetoascii(row[2]), unicodetoascii(row[3]),
                         row[4], slot.split(",")[0],
                         slot.split(",")[1], "\n".join(row[7]),
-                        row[8], row[9],
+                        row[8], unicodetoascii(row[9]),
                         row[10]))
 
 
