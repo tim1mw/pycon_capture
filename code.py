@@ -91,7 +91,7 @@ class index:
         
     def getScheduleData(self):
         try:
-            response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=5)
+            response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=8)
             schedule = response.read()
             file = open("recordings/schedule.json", 'w')
             file.write(schedule)
