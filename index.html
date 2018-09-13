@@ -34,13 +34,15 @@
 </head>
 <body>
 
-<h1>Pycon Capture</h1>
+<h1>PyCon Capture</h1>
 
-<p style="font-weight:bold">Please note the video monitor has a 10 second lag and is only so you can check the recording is working. The presentation start and stop marks should NOT be done on the basis of the video monitor. Watch the real life presenter! Times can be tweaked later if they are wrong, the recording is continuous so nothing will be lost if you get this wrong. If any are badly out, please make a note of which one(s) it was. The recoding will not stop if you reload this page or stop the playback monitor.</p>
+<form>
+<div id="schedule" style="float:left;margin-top:0px;height:750px;width:420px;overflow-y:scroll;overflow-x:auto;border:1px solid black;"></div>
+</form>
 
-<p><a class="markbutton" href="javascript:makeFFmpegScript()">Generate FFMPEG Script</a></p>
+<div style="margin-left:430px;">
 
-<video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" style="float:right;" width="790" height="444"
+<video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444"
     data-setup='{
         "controls": true,
         "autoplay": false,
@@ -49,9 +51,10 @@
     <source src="live/video.m3u8" type="application/x-mpegURL">
 </video>
 
-<form>
-<div id="schedule" style="float:left;margin-top:0px;height:500px;width:420px;overflow-y:scroll;overflow-x:auto;border:1px solid black;"></div>
-</form>
+<p style="font-weight:bold">Please note the video monitor has a 10 second lag and is only so you can check the recording is working. The presentation start and stop marks should NOT be done on the basis of the video monitor. Watch the real life presenter! Times can be tweaked later if they are wrong, the recording is continuous so nothing will be lost if you get this wrong. If any are badly out, please make a note of which one(s) it was. The recoding will not stop if you reload this page or stop the playback monitor.</p>
 
+<p><a class="markbutton" href="javascript:makeFFmpegScript()">Generate FFMPEG Script</a></p>
+
+</div>
 </body>
 </html>

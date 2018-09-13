@@ -1,6 +1,7 @@
 var data={};
 var currentData={};
 var timeData={};
+var rendered=[];
 
 readJSONURL("code.py/?action=schedule", setCurrentData);
 
@@ -30,6 +31,28 @@ function setCurrentData(data) {
 function readTimeData(data) {
     timeData = data;
     render();
+    activePres();
+    setInterval(activePres, 30000);
+}
+
+function activePres() {
+    var datenow = new Date();
+    var timenow = datenow.getTime();
+
+    for (index in rendered) {
+        var item = rendered[index];
+        var startTime = Date.parse(datenow.toDateString()+" "+item['time']);
+        var endTime = Date.parse(datenow.toDateString()+" "+item['end_time']);
+        var ele=document.getElementById("pres_"+index);
+        if (timenow > startTime && timenow < endTime) {
+            console.log(":::"+item['ical_id']);
+            ele.style.background='#ffffff';
+            ele.style.border='4px solid red';
+        } else {
+            ele.style.background='#eeeeee';
+            ele.style.colour='2px solid black';
+        }
+    }
 }
 
 function render() {
@@ -43,6 +66,8 @@ function render() {
       }
       if (item['room'] == currentRoom && !item['break_event']) {
 
+        rendered[item['ical_id']] = item;
+
         var file = '';
         var startTime = '';
         var endTime = '';
@@ -53,16 +78,17 @@ function render() {
             endTime = timeData[item['ical_id']]['end'];
         }
 
-        html+="<p class='title'>Title:"+item['title']+"</p>"+
+        html+= "<div id='pres_"+item['ical_id']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
+          "<p class='title'>Title:"+item['title']+"</p>"+
           "<p>Presenter(s): "+item['name']+"<br />"+
-          "Schedule Time: "+item['time']+" to "+item['end_time']+"<br />"+
+          "Schedule Time: <span style='font-weight:bold'>"+item['time']+" to "+item['end_time']+"</span><br />"+
           "ical_id: "+item['ical_id']+"<br />"+
           "Recording File: <input type='text' id='name_"+item['ical_id']+"' name='name_"+item['ical_id']+"' size='20' value='"+file+"' readonly /><br />"+
           "Start time index:  <input type='text' id='start_"+item['ical_id']+"' name='start_"+item['ical_id']+"' size='8' value='"+startTime+"' readonly /><br />"+
           "End time index:  <input type='text' id='end_"+item['ical_id']+"' name='end_"+item['ical_id']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
           "<a href='javascript:setStart(\""+item['ical_id']+"\")' class='markbutton'>Mark Presenation Start</a>&nbsp;&nbsp;&nbsp;"+
           "<a href='javascript:setEnd(\""+item['ical_id']+"\")' class='markbutton'>Mark Presenation End</a>"+
-          "<hr /></p>";
+          "</p></div>";
       }
     }
   }
