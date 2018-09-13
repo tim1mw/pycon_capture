@@ -22,6 +22,7 @@ ffmpeg -f v4l2 -framerate 25 \
  -vf scale=1280x720 \
  -ab 256k \
  -bsf:v h264_mp4toannexb \
+ -async 1 -vsync 1 \
  -movflags empty_moov+omit_tfhd_offset+frag_keyframe+default_base_moof \
  -segment_list_flags +live -hls_allow_cache 0  -hls_time 1  -hls_wrap 50 \
  -f tee  -map 0:0 -map 1:0 "live/video.m3u8|recordings/$filename"
