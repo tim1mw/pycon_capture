@@ -172,19 +172,19 @@ def upload():
 
     abstract = T.get(1.0, END)
 
-    with open('description.txt', 'w') as file:  # Use file to refer to the file object
+    #with open('description.txt', 'w') as file:  # Use file to refer to the file object
 
-        file.write(abstract.strip("\n"))
+     #   file.write(abstract.strip("\n"))
 
     function_call = ""
-    function_call += "c:\\Users\\Glen\\Documents\\git_repos\\youtube-upload\\bin\\youtube-upload.bat "
+    function_call += "youtube-upload "
     #function_call += 'youtube-upload '
     function_call += '--title="'+new_title[:-1]+'" ' # added so apostrophe can be present - trim last newline
 
-    function_call += '--client-secrets=C:\\Users\\Glen\\Documents\\git_repos\\client_id.json '
+    function_call += '--client-secrets=client_id.json '
     # apostrophes can be present, need to test newlines and slashes
-    function_call += '--description="$(< description.txt)" '
-    #function_call += '--description="' + abstract.strip("\n") + '" '
+    # function_call += '--description="$(< description.txt)" '
+    function_call += '--description="' + abstract.strip("\n") + '" '
     function_call += '--tags="python, programming, pycon, pyconuk" '
     function_call += '--default-language="en" --default-audio-language="en" '
 
@@ -322,7 +322,7 @@ if __name__ == '__main__':
         filename_param = args.filename_param
     else:
         #filename_param = "talk_video.mp4"
-        filename_param ="C:/Users/Glen/Documents/git_repos/sample.m4v"
+        filename_param ="/home/glen442/git_repos/pycon_capture/big_buck_bunny_720p_10mb.flv"
 
     if args.ical_param:
         ical_param = args.ical_param
