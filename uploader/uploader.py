@@ -38,7 +38,8 @@ def callback(*args):
         print("args to callback: "+args[-1])
 
     else: # else change state to passed param
-        passed_param = cursor.execute(f"SELECT *  FROM schedule WHERE file LIKE '{args[-1].upper()}%'").fetchall()
+        query = "SELECT *  FROM schedule WHERE file LIKE '"+args[-1].upper()+"%'"
+        passed_param = cursor.execute(query).fetchall()
         print("Passed param entry: "+ str(passed_param[0]))
 
         inputed_list = []
@@ -60,8 +61,8 @@ def callback(*args):
     parsed_talk = "'"+parsed_talk+"'"
 
     # print(parsed_day+" "+ parsed_room)
-
-    possible_talks = cursor.execute(f"SELECT DISTINCT title FROM schedule WHERE day_field ={parsed_day} AND room ={parsed_room}").fetchall()
+    query="SELECT DISTINCT title FROM schedule WHERE day_field ="+parsed_day+" AND room ="+parsed_room+""
+    possible_talks = cursor.execute(query).fetchall()
 
     possible_talk_list = []
     for item in possible_talks:
@@ -90,8 +91,8 @@ def callback(*args):
         dropdown3_var.set(possible_talk_list[0])
 
     # Now we fill the text boxes
-
-    selected_metadata_raw = cursor.execute(f"SELECT *  FROM schedule WHERE day_field ={parsed_day} AND room ={parsed_room} AND title ={parsed_talk}").fetchall()
+    query = "SELECT *  FROM schedule WHERE day_field ="+parsed_day+" AND room ="+parsed_room+" AND title ="+parsed_talk+""
+    selected_metadata_raw = cursor.execute(query).fetchall()
 
     print(selected_metadata_raw)
     if selected_metadata_raw == []:
