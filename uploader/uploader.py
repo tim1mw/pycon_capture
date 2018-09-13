@@ -167,24 +167,30 @@ def upload():
     '''
 
     new_title = title.get(1.0, END)
-    abstract = T.get(1.0, END)
     file_name = filename_text.get(1.0, END)
 
+    abstract = T.get(1.0, END)
+
+    with open('description.txt', 'w') as file:  # Use file to refer to the file object
+
+        file.write(abstract.strip("\n"))
+
     function_call = ""
-    function_call += "youtube-upload "
-    # function_call += 'youtube-upload '
+    function_call += "c:\\Users\\Glen\\Documents\\git_repos\\youtube-upload\\bin\\youtube-upload.bat "
+    #function_call += 'youtube-upload '
     function_call += '--title="'+new_title[:-1]+'" ' # added so apostrophe can be present - trim last newline
 
+    function_call += '--client-secrets=C:\\Users\\Glen\\Documents\\git_repos\\client_id.json '
     # apostrophes can be present, need to test newlines and slashes
-    function_call += '--description="'+abstract.strip("\n").replace("\n","\\n")+'" ' # TODO description newlines
-    # function_call += '--description="' + abstract.strip("\n") + '" '
+    function_call += '--description="$(< description.txt)" '
+    #function_call += '--description="' + abstract.strip("\n") + '" '
     function_call += '--tags="python, programming, pycon, pyconuk" '
     function_call += '--default-language="en" --default-audio-language="en" '
 
-    # function_call += '--client-secrets=my_client_secrets.json '
-    function_call += '--client-secrets=client_id.json '
+    #function_call += '--client-secrets=my_client_secrets.json '
 
-    # function_call += '--credentials-file=my_credentials.json '
+
+    #function_call += '--credentials-file=my_credentials.json '
 
     function_call += '--privacy private '
     function_call += file_name
@@ -195,8 +201,11 @@ def upload():
 def upload_program(ical_param, filename_param):
 
     global db
-    db = sqlite3.connect('mydb.db')
-
+    #check for existance of db file
+    if os.path.isfile('mydb.db'):
+        db = sqlite3.connect('mydb.db')
+    else:
+        print("ERROR: expected mydb.db to be in the same folder as this script - Need to move it from where web_scraper created it")
     global cursor
     cursor = db.cursor()
 
@@ -311,11 +320,12 @@ if __name__ == '__main__':
     if args.filename_param:
         filename_param = args.filename_param
     else:
-        filename_param = "talk_video.mp4"
+        #filename_param = "talk_video.mp4"
+        filename_param ="C:/Users/Glen/Documents/git_repos/sample.m4v"
 
     if args.ical_param:
         ical_param = args.ical_param
     else:
-        ical_param = "no_value"
-        # ical_param = "0b96" # lightning talks
+        #ical_param = "no_value"
+        ical_param = "0b96" # lightning talks
         upload_program(ical_param, filename_param)
