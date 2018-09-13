@@ -90,8 +90,16 @@ class index:
         return json.dumps({"ok":True})
         
     def getScheduleData(self):
-        response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/')
-        return response.read()
+        try:
+            response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=5)
+            schedule = response.read()
+            file = open("recordings/schedule.json", 'w')
+            file.write(schedule)
+            file.close()
+            return schedule
+        except urllib2.URLError as err: 
+            schedulecache = open("recordings/schedule.json", 'r')
+            return schedulecache.read()
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
