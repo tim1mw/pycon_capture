@@ -231,9 +231,10 @@ def upload():
     description_text = description_text.strip("\n")  # trim top and bottom
     description_text = description_text.replace('"', '\\"')  # escape double quotes
 
+    '''
     function_call = ""
-    function_call += "youtube-upload "
-    #function_call += 'youtube-upload '
+    # function_call += "youtube-upload "
+    #function_call += 'upload_video.py  '
     function_call += '--title="'+new_title[:-1]+'" ' # added so apostrophe can be present - trim last newline
 
     function_call += '--client-secrets=../../client_id.json '
@@ -254,6 +255,26 @@ def upload():
     if '\\' in description_text or '\\' in new_title:
 
         print("\n\n"+new_title)
+    '''
+    function_call = ""
+    function_call += 'python upload_video.py  '
+    function_call += '--file "' +file_name.strip("\n")+'" '
+    function_call += '--title "'+new_title.strip("\n")+'" ' # added so apostrophe can be present - trim last newline
+
+
+    function_call += '--client-secrets ../../client_id.json '
+    function_call += '--keywords "python, programming, pycon, pyconuk" '
+    function_call += '--description "' + description_text + '" '
+    #function_call += '--client-secrets=my_client_secrets.json '
+    #function_call += '--credentials-file=my_credentials.json '
+
+    # function_call += '--privacy private ' # private by default
+
+
+
+
+    print (function_call)
+
     os.system(function_call)
 
 def upload_program(ical_param, filename_param):
