@@ -17,6 +17,7 @@ echo $filename > recordings/current.txt
 ffmpeg -f v4l2 -framerate 25 -video_size 720x576 \
  -thread_queue_size 512  \
  -i /dev/video1 \
+ -itsoffset 0.35 \
  -thread_queue_size 512  \
  -f pulse -i default \
  -vcodec libx264 -vb 5000k -acodec aac \
