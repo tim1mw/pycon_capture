@@ -277,7 +277,7 @@ def upload():
 
     os.system(function_call)
 
-def upload_program(ical_param, filename_param):
+def upload_program(ical_param, filename_param, override):
 
     global db
     #check for existance of db file
@@ -385,6 +385,9 @@ def upload_program(ical_param, filename_param):
 
     callback(ical_param)
 
+    if override:
+        upload()
+
     mainloop()
 
 
@@ -394,6 +397,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--ical_param")
     parser.add_argument("--filename_param")
+    parser.add_argument("--override")
     args = parser.parse_args()
 
     if args.filename_param:
@@ -402,9 +406,20 @@ if __name__ == '__main__':
         filename_param = "talk_video.mp4"
         #filename_param ="/home/glen442/git_repos/pycon_capture/big_buck_bunny_720p_10mb.flv"
 
+    if args.override:
+        if args.override == "true":
+            override = True
+        elif args.override == "false":
+            override = False
+        else:
+            print("Override param not recognised. Assuming FALSE")
+            override = False
+    else:
+        override = False
+
     if args.ical_param:
         ical_param = args.ical_param
     else:
         ical_param = "no_value"
         #ical_param = "0b96" # lightning talks
-        upload_program(ical_param, filename_param)
+        upload_program(ical_param, filename_param, override)
