@@ -40,6 +40,7 @@ class index:
             
         datastore[data['id']][data['action']] = timecode
         datastore[data['id']]['file'] = filename
+        datastore[data['id']]['title'] = data['title']
         
         with open("recordings/timedata.json", 'w') as f:
             json.dump(datastore, f, indent=4, sort_keys=True)
@@ -69,6 +70,13 @@ class index:
 
         return {};
 
+    def readScheduleJSON(self):
+        if os.path.exists("recordings/schedule.json"):
+            jsondatafile = open("recordings/schedule.json", "r")
+            return json.loads(jsondatafile.read())
+
+        return {};
+
 
     def makeFFmpegScript(self):
         datastore = self.readTimecodeJSON()
@@ -80,7 +88,7 @@ class index:
             script += " -ss "+datastore[item]['start']
             script += " -to "+datastore[item]['end']
             script += " -c copy -async 1"
-            script += " "+item+".mp4"
+            script += " \""+item+"-"+datastore[item]['title']+".mp4\""
             script += "\n\n"
             
         file = open("recordings/ffmpeg-script.sh", 'w')
