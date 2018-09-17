@@ -1,9 +1,9 @@
 import os, sys
 import web
 import json
-import urllib2
-import requests
-import ssl
+import pycurl
+import certifi
+from StringIO import StringIO
 from subprocess import Popen, PIPE
 
 os.environ['http_proxy'] = ''
@@ -102,14 +102,16 @@ class index:
         
     def getScheduleData(self):
         try:
-            # This refuses to work on Cardiff city wifi
-            #ctx = ssl.create_default_context()
-            #ctx.check_hostname = False
-            #ctx.verify_mode = ssl.CERT_NONE
-            #response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=10, context=ctx)
-            #schedule = response.read()
-            # This gives an SSL handshake error on Cardiff city wifi 
-            schedule = requests.get('https://2018.hq.pyconuk.org/schedule/json/', verify=False, timeout=10).text
+            buffer = StringIO()
+            c = pycurl.Curl()
+            c.setopt(c.URL, 'https://2018.hq.pyconuk.org/schedule/json/')
+            c.setopt(c.FOLLOWLOCATION, True)
+            c.setopt(c.WRITEDATA, buffer)
+            c.setopt(c.CAINFO, certifi.where())
+            c.perform()
+            c.close()
+
+            schedule = buffer.getvalue()
             file = open("recordings/schedule.json", 'w')
             file.write(schedule)
             file.close()
