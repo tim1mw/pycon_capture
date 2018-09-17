@@ -2,8 +2,11 @@ import os, sys
 import web
 import json
 import urllib2
+import requests
+import ssl
 from subprocess import Popen, PIPE
 
+os.environ['http_proxy'] = ''
 
 abspath = os.path.dirname(__file__)
 sys.path.append(abspath)
@@ -99,13 +102,20 @@ class index:
         
     def getScheduleData(self):
         try:
-            response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=8)
-            schedule = response.read()
+            # This refuses to work on Cardiff city wifi
+            #ctx = ssl.create_default_context()
+            #ctx.check_hostname = False
+            #ctx.verify_mode = ssl.CERT_NONE
+            #response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=10, context=ctx)
+            #schedule = response.read()
+            # This gives an SSL handshake error on Cardiff city wifi 
+            schedule = requests.get('https://2018.hq.pyconuk.org/schedule/json/', verify=False, timeout=10).text
             file = open("recordings/schedule.json", 'w')
             file.write(schedule)
             file.close()
             return schedule
-        except :
+        except Exception as e:
+            print e
             print("Using cached schedule...");
             schedulecache = open("recordings/schedule.json", 'r')
             return schedulecache.read()
