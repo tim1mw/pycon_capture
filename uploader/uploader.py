@@ -51,7 +51,10 @@ def unicodetoascii(text): # should probably sort encoding out rather than do thi
             replace("\\xc3\\xa7", "ç").
             replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
             replace("\\xc4\\xb1", "ı"). # dotless i
-            replace("\\xc5\\xa1", "š")
+            replace("\\xc5\\xa1", "š").
+            replace(";", "\;").     # escaped the semicolon so they wont be eval-ed by bash/sh
+            replace("<", "&lt\;").  # cant have raw <> in description
+            replace(">", "&gt\;")   # escaped the semicolon so they wont be eval-ed by bash/sh
     )
 
     if "\\" in TEXT:
