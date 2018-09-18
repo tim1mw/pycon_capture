@@ -1,3 +1,9 @@
+#
+#
+# This file is not needed for the current upload capability
+#
+#
+
 from tkinter import *
 import tkinter as tk
 from tkinter.filedialog import askopenfilename
@@ -234,7 +240,7 @@ def upload():
     '''
     function_call = ""
     # function_call += "youtube-upload "
-    #function_call += 'upload_video.py  '
+    #function_call += 'upload_one_video.py  '
     function_call += '--title="'+new_title[:-1]+'" ' # added so apostrophe can be present - trim last newline
 
     function_call += '--client-secrets=../../client_id.json '
@@ -257,7 +263,7 @@ def upload():
         print("\n\n"+new_title)
     '''
     function_call = ""
-    function_call += 'python upload_video.py  '
+    function_call += 'python upload_one_video.py  '
     function_call += '--file "' +file_name.strip("\n")+'" '
     function_call += '--title "'+new_title.strip("\n")+'" ' # added so apostrophe can be present - trim last newline
 

@@ -1,3 +1,9 @@
+#
+#
+# This file is not needed for the current upload capability
+#
+#
+
 import requests
 from bs4 import BeautifulSoup
 import time
@@ -83,7 +89,7 @@ def get_talk_page(href):
         href_page = requests.get(base_url + href[:19])
         with open("files/"+href[15:19]+"_"+href[20:], 'w') as page:
             page.write(str(href_page.content))
-        time.sleep(1)
+        # time.sleep(1)
     else:
         print("File: "+"files/"+href[15:19]+"_"+href[20:]+" exists. Skipping...")
 

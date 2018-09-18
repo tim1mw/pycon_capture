@@ -5,3 +5,4 @@ recordings/*
 config.js
 web scraper/files/*
 *.db
+.idea
