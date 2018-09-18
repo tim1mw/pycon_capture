@@ -1,9 +1,12 @@
 import os, sys
 import web
 import json
-import urllib2
+import pycurl
+import certifi
+from StringIO import StringIO
 from subprocess import Popen, PIPE
 
+os.environ['http_proxy'] = ''
 
 abspath = os.path.dirname(__file__)
 sys.path.append(abspath)
@@ -40,6 +43,7 @@ class index:
             
         datastore[data['id']][data['action']] = timecode
         datastore[data['id']]['file'] = filename
+        datastore[data['id']]['title'] = data['title']
         
         with open("recordings/timedata.json", 'w') as f:
             json.dump(datastore, f, indent=4, sort_keys=True)
@@ -69,6 +73,13 @@ class index:
 
         return {};
 
+    def readScheduleJSON(self):
+        if os.path.exists("recordings/schedule.json"):
+            jsondatafile = open("recordings/schedule.json", "r")
+            return json.loads(jsondatafile.read())
+
+        return {};
+
 
     def makeFFmpegScript(self):
         datastore = self.readTimecodeJSON()
@@ -80,7 +91,7 @@ class index:
             script += " -ss "+datastore[item]['start']
             script += " -to "+datastore[item]['end']
             script += " -c copy -async 1"
-            script += " "+item+".mp4"
+            script += " \""+item+"-"+datastore[item]['title']+".mp4\""
             script += "\n\n"
             
         file = open("recordings/ffmpeg-script.sh", 'w')
@@ -91,13 +102,22 @@ class index:
         
     def getScheduleData(self):
         try:
-            response = urllib2.urlopen('https://2018.hq.pyconuk.org/schedule/json/', timeout=8)
-            schedule = response.read()
+            buffer = StringIO()
+            c = pycurl.Curl()
+            c.setopt(c.URL, 'https://2018.hq.pyconuk.org/schedule/json/')
+            c.setopt(c.FOLLOWLOCATION, True)
+            c.setopt(c.WRITEDATA, buffer)
+            c.setopt(c.CAINFO, certifi.where())
+            c.perform()
+            c.close()
+
+            schedule = buffer.getvalue()
             file = open("recordings/schedule.json", 'w')
             file.write(schedule)
             file.close()
             return schedule
-        except :
+        except Exception as e:
+            print e
             print("Using cached schedule...");
             schedulecache = open("recordings/schedule.json", 'r')
             return schedulecache.read()

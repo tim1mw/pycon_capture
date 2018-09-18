@@ -127,7 +127,7 @@ function render() {
         }
 
         html+= "<div id='pres_"+item['ical_id']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
-          "<p class='title'>Title:"+item['title']+"</p>"+
+          "<p class='title'>Title:<div id='title_"+item['ical_id']+"'>"+item['title']+"</div></p>"+
           "<p>Presenter(s): "+item['name']+"<br />"+
           "Schedule Time: <span style='font-weight:bold'>"+item['time']+" to "+item['end_time']+"</span><br />"+
           "ical_id: "+item['ical_id']+"<br />"+
@@ -157,7 +157,7 @@ function setStart(id) {
            return;
        }
     }
-    var url="code.py/?id="+id+"&action=start";
+    var url="code.py/?id="+id+"&action=start&title="+getTitle(id);
     readJSONURL(url, setStartCallback);
 }
 
@@ -173,13 +173,17 @@ function setEnd(id) {
            return;
        }
     }
-    var url="code.py/?id="+id+"&action=end";
+    var url="code.py/?id="+id+"&action=end&title="+getTitle(id);
     readJSONURL(url, setEndCallback);
 }
 
 function setEndCallback(data) {
     document.getElementById('end_'+data['id']).value = data['end'];
     document.getElementById('name_'+data['id']).value = data['name'];
+}
+
+function getTitle(id) {
+    return encodeURIComponent(document.getElementById("title_"+id).innerHTML);
 }
 
 function makeFFmpegScript() {
