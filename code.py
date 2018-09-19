@@ -6,17 +6,17 @@ import certifi
 from StringIO import StringIO
 from subprocess import Popen, PIPE
 
+
 os.environ['http_proxy'] = ''
 
 abspath = os.path.dirname(__file__)
 sys.path.append(abspath)
 os.chdir(abspath)
 
-
-
 urls = (
     '/(.*)', 'index'
 )
+
 
 class index:
 
@@ -25,7 +25,7 @@ class index:
         if data['action'] == 'start' or data['action'] == 'end':
             return self.saveNewTimeIndex(data)
         if data['action'] == 'ffmpeg':
-            return self.makeFFmpegScript();
+            return self.makeFFmpegScript()
         if data['action'] == 'schedule':
             return self.getScheduleData()
 
@@ -71,14 +71,14 @@ class index:
             jsondatafile = open("recordings/timedata.json", "r")
             return json.loads(jsondatafile.read())
 
-        return {};
+        return {}
 
     def readScheduleJSON(self):
         if os.path.exists("recordings/schedule.json"):
             jsondatafile = open("recordings/schedule.json", "r")
             return json.loads(jsondatafile.read())
 
-        return {};
+        return {}
 
 
     def makeFFmpegScript(self):
@@ -118,7 +118,7 @@ class index:
             return schedule
         except Exception as e:
             print e
-            print("Using cached schedule...");
+            print("Using cached schedule...")
             schedulecache = open("recordings/schedule.json", 'r')
             return schedulecache.read()
 
