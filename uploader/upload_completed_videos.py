@@ -5,6 +5,7 @@ import os
 import fnmatch
 import re
 import upload_one_video as uv
+import socket
 
 SIMPLE_HTML_TAG_RE = re.compile('<.*?>')
 COMMON_KEYWORDS = ['python', 'programming', 'pycon', 'pyconuk']
@@ -94,9 +95,25 @@ class ScheduleData:
         else:
             raise StopIteration
 
-    @staticmethod
-    def read_schedule_data():
-        r = requests.get(SCHEDULE_URL)
+    def captive_portal(self):
+        r = requests.get(SCHEDULE_URL, allow_redirects=False)
+
+        if r.status_code == '302':  # redirect implies captive portal
+            return True
+        else:
+            return False
+
+
+
+    def read_schedule_data(self):
+
+        if captive_portal():
+            # launch browser to click through captive portal
+            print("ERROR: REIDRECT DETECTED -- CONNECT TO CAPTIVE PORTAL AND RE-RUN SCRIPT")
+            sys.exit(-2)
+        else:
+            r = requests.get(SCHEDULE_URL)
+
         try:
             the_schedule = r.json()
         except ValueError:
