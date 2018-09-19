@@ -7,7 +7,7 @@ import re
 import upload_one_video as uv
 
 SIMPLE_HTML_TAG_RE = re.compile('<.*?>')
-COMMON_KEYWORDS = ['python', 'programming', 'pycon', 'pyconuk']
+COMMON_KEYWORDS = ['python', 'programming', 'pycon', 'pyconuk', 'pyconuk2018']
 VALID_PRIVACY_STATUSES = ('public', 'private', 'unlisted')
 
 READY_FOR_UPLOAD = 'ready_for_upload'
