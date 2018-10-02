@@ -35,7 +35,8 @@ def remove_html_tags(raw_text):
 
 
 def convert_newlines(multi_line):
-    # Assume that if the text uses Mac old-style '\r' newlines, then there will be at least one '\r\r' sequence to find
+    # Assume that if the text uses Mac old-style '\r' newlines, then there
+    # will be at least one '\r\r' sequence to find
     if multi_line.find('\r\r') > -1:
         # Mac old-style
         while '\r' in multi_line:
@@ -48,7 +49,8 @@ def convert_newlines(multi_line):
 
 
 def squash_empty_lines(multi_line):
-    # Get rid of unnecessary multiple blank lines, but keep one 'white space' separator
+    # Get rid of unnecessary multiple blank lines, but keep one 'white space'
+    # separator
     while '\n\n\n' in multi_line:
         multi_line = multi_line.replace('\n\n\n', '\n\n')
     return multi_line
@@ -63,6 +65,7 @@ class YTSessionData:
     This class only exists because the original upload script passed the parsed arg object into the function.
     Rather than rewrite that code now, create an object that has the same members.
     '''
+
     def __init__(self, filename, category, privacy, metadata):
         self.file = filename
         # Comma separated list
@@ -172,12 +175,15 @@ class ScheduleData:
         if not this_event:
             return None
 
-        subtitle_string = ('.. ' + this_event['subtitle']) if this_event['subtitle'] else ''
+        subtitle_string = (
+            '.. ' + this_event['subtitle']) if this_event['subtitle'] else ''
         speaker_string = '.. ' + this_event['speaker']
-        event_string = this_event['room'] + ' ' + this_event['day_date'] + ' ' + \
-            this_event['start_time'] + '-' + this_event['end_time']
+        event_string = this_event['room'] + ' ' + this_event['day_date'] + \
+            ' ' + this_event['start_time'] + '-' + this_event['end_time']
 
-        track_string = ('Track: ' + this_event['track']) if this_event['track'] else ''
+        track_string = (
+            'Track: ' +
+            this_event['track']) if this_event['track'] else ''
 
         suitable_for = [each for each in [
             'New programmers' if this_event['new_programmers'] else '',
@@ -192,7 +198,8 @@ class ScheduleData:
         # Might also need to truncate very long descriptions
         clean_description_string = all_text_cleaning(this_event['description'])
 
-        # List comprehension suppresses fully blank lines, while allowing '  ' as a spacing line
+        # List comprehension suppresses fully blank lines, while allowing '  '
+        # as a spacing line
         description_lines = [each for each in [
             this_event['title'],
             subtitle_string,
@@ -206,17 +213,20 @@ class ScheduleData:
         ] if each]
         description_string = squash_empty_lines('\n'.join(description_lines))
 
-        more_keywords = [each for each in [
-            'education' if this_event['track'].lower().find('education') else '',
-            'pydata' if this_event['track'].lower().find('pydata') else '',
-            'teaching' if this_event['teachers'] else '',
-            'data science' if this_event['data_scientists'] else '',
-            'beginner' if this_event['new_programmers'] else ''
-        ] if each]
+        more_keywords = [
+            each for each in [
+                'education' if this_event['track'].lower().find('education') else '',
+                'pydata' if this_event['track'].lower().find('pydata') else '',
+                'teaching' if this_event['teachers'] else '',
+                'data science' if this_event['data_scientists'] else '',
+                'beginner' if this_event['new_programmers'] else ''] if each]
         keyword_string = ','.join(COMMON_KEYWORDS + more_keywords)
 
-        metadata = dict(id=this_event['id'].lower(), title=this_event['title'], description=description_string,
-                        keywords=keyword_string)
+        metadata = dict(
+            id=this_event['id'].lower(),
+            title=this_event['title'],
+            description=description_string,
+            keywords=keyword_string)
         return metadata
 
 
@@ -225,8 +235,10 @@ class ReadyVideos:
         self.sd = schedule_data
         self.cd = config_data
         self.ready_dir = os.path.join(self.cd['v_root'], self.cd['v_ready'])
-        self.no_launch_dir = os.path.join(self.cd['v_root'], self.cd['v_no_launch'])
-        self.completed_dir = os.path.join(self.cd['v_root'], self.cd['v_completed'])
+        self.no_launch_dir = os.path.join(
+            self.cd['v_root'], self.cd['v_no_launch'])
+        self.completed_dir = os.path.join(
+            self.cd['v_root'], self.cd['v_completed'])
         self.failed_dir = os.path.join(self.cd['v_root'], self.cd['v_failed'])
         self.auth_dir = os.path.join(self.cd['v_root'], self.cd['v_auth'])
         self.v_mask = '*.' + self.cd['v_ext']
@@ -242,12 +254,16 @@ class ReadyVideos:
             if fnmatch.fnmatch(a_file, self.v_mask):
                 self.v_ready_list.append(a_file)
         self.ready_count = len(self.v_ready_list)
-        print('Found {} file(s) matching {}'.format(self.ready_count, self.v_mask))
+        print(
+            'Found {} file(s) matching {}'.format(
+                self.ready_count,
+                self.v_mask))
 
     def write_all_youtube_metadata(self):
         for event_id in self.sd:
             metadata = self.sd.get_formatted_details(event_id)
-            # Nice to write this to a file, but just for testing, so write to screen and copy paste
+            # Nice to write this to a file, but just for testing, so write to
+            # screen and copy paste
             for item in metadata:
                 print(metadata[item])
             print('\n')
@@ -256,16 +272,22 @@ class ReadyVideos:
     def upload_all_videos(self):
         def get_id_from_name(file_name):
             # We want a name that is at least xxxx.ext long
-            # More precisely, we should strip the extension and check for 4 characters
+            # More precisely, we should strip the extension and check for 4
+            # characters
             if len(file_name) < 8:
                 return None
             return file_name[:4].lower()
 
         def move_one_file(the_file, from_dir, to_dir):
             try:
-                os.rename(os.path.join(from_dir, the_file), os.path.join(to_dir, the_file))
+                os.rename(
+                    os.path.join(
+                        from_dir, the_file), os.path.join(
+                        to_dir, the_file))
             except (IOError, OSError):
-                print('Could not move {} from {} to {}'.format(the_file, from_dir, to_dir))
+                print(
+                    'Could not move {} from {} to {}'.format(
+                        the_file, from_dir, to_dir))
 
         def format_session_data(session):
             return session
@@ -288,19 +310,29 @@ class ReadyVideos:
                 # v_session_data = self.sd.get_upload_details(v_id)
                 v_session_data = self.sd.get_formatted_details(v_id)
                 if not v_session_data:
-                    move_one_file(v_file_name, self.ready_dir, self.no_launch_dir)
+                    move_one_file(
+                        v_file_name,
+                        self.ready_dir,
+                        self.no_launch_dir)
                     self.no_launch_count += 1
                     done_this = True
                 else:
                     yt_session_data = format_session_data(v_session_data)
-                    yt_session_data = YTSessionData(os.path.join(self.ready_dir, v_file_name), self.cd['v_category'],
-                                                    self.cd['v_privacy'], yt_session_data)
+                    yt_session_data = YTSessionData(
+                        os.path.join(
+                            self.ready_dir,
+                            v_file_name),
+                        self.cd['v_category'],
+                        self.cd['v_privacy'],
+                        yt_session_data)
                     yt_video_id = uv.upload_video(yt_service, yt_session_data)
                     if yt_video_id:
-                        move_one_file(v_file_name, self.ready_dir, self.completed_dir)
+                        move_one_file(
+                            v_file_name, self.ready_dir, self.completed_dir)
                         self.completed_count += 1
                     else:
-                        move_one_file(v_file_name, self.ready_dir, self.failed_dir)
+                        move_one_file(
+                            v_file_name, self.ready_dir, self.failed_dir)
                         self.failed_count += 1
                     done_this = True
             if done_this:
@@ -349,13 +381,17 @@ def make_all_dirs(all_dirs):
 
 def get_config():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--category', default='22',
-                        help='Numeric video category. ' +
-                             'See https://developers.google.com/youtube/v3/docs/videoCategories/list')
+    parser.add_argument(
+        '--category',
+        default='22',
+        help='Numeric video category. ' +
+        'See https://developers.google.com/youtube/v3/docs/videoCategories/list')
     parser.add_argument('--privacy', choices=VALID_PRIVACY_STATUSES,
                         default='private', help='Video privacy status.')
-    parser.add_argument('--root', required=True,
-                        help='Base file path (absolute directory) for video upload functions')
+    parser.add_argument(
+        '--root',
+        required=True,
+        help='Base file path (absolute directory) for video upload functions')
     args = parser.parse_args()
     c = {
         'v_root': args.root,

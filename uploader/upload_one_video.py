@@ -27,10 +27,16 @@ httplib2.RETRIES = 1
 MAX_RETRIES = 10
 
 # Always retry when these exceptions are raised.
-RETRIABLE_EXCEPTIONS = (httplib2.HttpLib2Error, IOError, http.client.NotConnected,
-                        http.client.IncompleteRead, http.client.ImproperConnectionState,
-                        http.client.CannotSendRequest, http.client.CannotSendHeader,
-                        http.client.ResponseNotReady, http.client.BadStatusLine)
+RETRIABLE_EXCEPTIONS = (
+    httplib2.HttpLib2Error,
+    IOError,
+    http.client.NotConnected,
+    http.client.IncompleteRead,
+    http.client.ImproperConnectionState,
+    http.client.CannotSendRequest,
+    http.client.CannotSendHeader,
+    http.client.ResponseNotReady,
+    http.client.BadStatusLine)
 
 # Always retry when an apiclient.errors.HttpError with one of these status
 # codes is raised.
@@ -50,7 +56,8 @@ CLIENT_SECRETS_FILE = 'client_secrets.json'
 AUTHENTICATED_SERVICE_FILE = 'authenticated_youtube.json'
 
 # This OAuth 2.0 access scope allows an application to upload files to the
-# authenticated user's YouTube channel, but doesn't allow other types of access.
+# authenticated user's YouTube channel, but doesn't allow other types of
+# access.
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
 API_SERVICE_NAME = 'youtube'
 API_VERSION = 'v3'
@@ -77,10 +84,14 @@ def write_credentials(fname, credentials):
         # json_file += credentials.json
 
         file.write('{"access_token":"' + credentials.token + '", ')
-        file.write('"token_expiry":"' + str(credentials.expiry) + '", ')  # datetime
+        file.write('"token_expiry":"' +
+                   str(credentials.expiry) +
+                   '", ')  # datetime
         file.write('"scopes":"' + str(credentials._scopes) + '", ')  # list
         file.write('"refresh_token":"' + credentials._refresh_token + '", ')
-        file.write('"id_token":"' + str(credentials._id_token) + '", ')  # nonetype
+        file.write('"id_token":"' +
+                   str(credentials._id_token) +
+                   '", ')  # nonetype
         file.write('"token_uri":"' + credentials._token_uri + '", ')
         file.write('"client_id":"' + credentials._client_id + '", ')
         file.write('"user_agent":"", ')
@@ -161,25 +172,33 @@ def resumable_upload(request):
     # - we get a response
     # - we get a non-retriable error (a 'fatal' error)
     # - we exceed   our max retries
-    # TODO: The logic of this loop is now a bit messed up and needs tidying to make it clearer
+    # TODO: The logic of this loop is now a bit messed up and needs tidying to
+    # make it clearer
     while response is None:
         try:
             print('Uploading file...')
             status, response = request.next_chunk()
             if response is not None:
                 if 'id' in response:
-                    print('Video id "%s" was successfully uploaded.' % response['id'])
+                    print(
+                        'Video id "%s" was successfully uploaded.' %
+                        response['id'])
                     result_id = response['id']
                 else:
-                    print('The upload failed with an unexpected response: %s' % response)
+                    print(
+                        'The upload failed with an unexpected response: %s' %
+                        response)
         except HttpError as e:
             if e.resp.status in RETRIABLE_STATUS_CODES:
-                error = 'A retriable HTTP error %d occurred:\n%s' % (e.resp.status, e.content)
+                error = 'A retriable HTTP error %d occurred:\n%s' % (
+                    e.resp.status, e.content)
             else:
                 # Do this so we force quit the loop
                 # TODO: Need to tidy the logic
                 response = 'Fatal error'
-                print('A non-retriable HTTP error %d occurred\n%s' % (e.resp.status, e.content))
+                print(
+                    'A non-retriable HTTP error %d occurred\n%s' %
+                    (e.resp.status, e.content))
         except RETRIABLE_EXCEPTIONS as e:
             error = 'A retriable error occurred:\n%s' % e
 
@@ -194,7 +213,9 @@ def resumable_upload(request):
             else:
                 max_sleep = 2 ** retry
                 sleep_seconds = random.random() * max_sleep
-                print('Sleeping %f seconds and then retrying...' % sleep_seconds)
+                print(
+                    'Sleeping %f seconds and then retrying...' %
+                    sleep_seconds)
                 time.sleep(sleep_seconds)
             error = None
     return result_id
@@ -216,9 +237,11 @@ if __name__ == '__main__':
     parser.add_argument('--title', help='Video title', default='Test Title')
     parser.add_argument('--description', help='Video description',
                         default='Test Description')
-    parser.add_argument('--category', default='22',
-                        help='Numeric video category. ' +
-                             'See https://developers.google.com/youtube/v3/docs/videoCategories/list')
+    parser.add_argument(
+        '--category',
+        default='22',
+        help='Numeric video category. ' +
+        'See https://developers.google.com/youtube/v3/docs/videoCategories/list')
     parser.add_argument('--keywords', help='Video keywords, comma separated',
                         default='')
     parser.add_argument('--privacyStatus', choices=VALID_PRIVACY_STATUSES,
