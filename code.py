@@ -1,4 +1,5 @@
-import os, sys
+import os
+import sys
 import web
 import json
 import pycurl
@@ -21,7 +22,7 @@ urls = (
 class index:
 
     def GET(self, stuff):
-        data = web.input(action="none",id=None)
+        data = web.input(action="none", id=None)
         if data['action'] == 'start' or data['action'] == 'end':
             return self.saveNewTimeIndex(data)
         if data['action'] == 'ffmpeg':
@@ -32,7 +33,7 @@ class index:
     def saveNewTimeIndex(self, data):
         file = open("recordings/current.txt", "r")
         filename = file.read()
-        pyDict = {"id":data['id'], "name": filename}
+        pyDict = {"id": data['id'], "name": filename}
 
         timecode = self.readTimeCode()
 
@@ -40,11 +41,11 @@ class index:
 
         if data['id'] not in datastore:
             datastore[data['id']] = {}
-            
+
         datastore[data['id']][data['action']] = timecode
         datastore[data['id']]['file'] = filename
         datastore[data['id']]['title'] = data['title']
-        
+
         with open("recordings/timedata.json", 'w') as f:
             json.dump(datastore, f, indent=4, sort_keys=True)
 
@@ -80,26 +81,25 @@ class index:
 
         return {}
 
-
     def makeFFmpegScript(self):
         datastore = self.readTimecodeJSON()
         script = ""
         for item in datastore:
             # The strip() on the timecode read seems have no effect, but it works when I do it here,
             # so repeat to make sure we have no whitespace junk
-            script += "ffmpeg -i \""+datastore[item]['file'].strip()+"\""
-            script += " -ss "+datastore[item]['start']
-            script += " -to "+datastore[item]['end']
+            script += "ffmpeg -i \"" + datastore[item]['file'].strip() + "\""
+            script += " -ss " + datastore[item]['start']
+            script += " -to " + datastore[item]['end']
             script += " -c copy -async 1"
-            script += " \""+item+"-"+datastore[item]['title']+".mp4\""
+            script += " \"" + item + "-" + datastore[item]['title'] + ".mp4\""
             script += "\n\n"
-            
+
         file = open("recordings/ffmpeg-script.sh", 'w')
         file.write(script)
         file.close()
 
-        return json.dumps({"ok":True})
-        
+        return json.dumps({"ok": True})
+
     def getScheduleData(self):
         try:
             buffer = StringIO()
@@ -121,6 +121,7 @@ class index:
             print("Using cached schedule...")
             schedulecache = open("recordings/schedule.json", 'r')
             return schedulecache.read()
+
 
 if __name__ == "__main__":
     app = web.application(urls, globals())
