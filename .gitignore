@@ -6,3 +6,4 @@ config.js
 web scraper/files/*
 *.db
 .idea
+params.sh

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# -aspect 16:9
+source params.sh
 
 rm -rf live
 mkdir live
@@ -14,10 +14,10 @@ rm -f recordings/current.txt
 echo $filename > recordings/current.txt
 
 
-ffmpeg -f pulse -i default \
+ffmpeg -f pulse -i $AUDIO_DEV \
   -f v4l2 -framerate 25 -video_size 720x576 \
  -thread_queue_size 512  \
- -i /dev/video1 \
+ -i $VIDEO_DEV \
  -itsoffset 0.35 \
  -thread_queue_size 512  \
  -i images/logo.png \
