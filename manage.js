@@ -2,6 +2,8 @@ var rawdata={};
 var currentData={};
 var timeData={};
 var rendered=[];
+var currentDate = "";
+var currentRoom = "";
 
 var dcookie = getCookie("date");
 if (dcookie != "") {
@@ -40,8 +42,26 @@ function readJSONURL(url, callBack) {
 
 function setCurrentData(data) {
     rawdata = data;
-    currentData = data[currentDate]['matrix'];
+    if (currentDate == "") {
+        currentDate = data['schedule']['conference']['days'][0]['date'];
+    }
+
+    if (currentRoom == "") {
+        for (room in data['schedule']['conference']['days'][0]['rooms']) {
+            currentRoom = room;
+            break;
+        }
+    }
+    updateCurrentData();
     readJSONURL("recordings/timedata.json", readTimeData);
+}
+
+function updateCurrentData() {
+    for (day in rawdata['schedule']['conference']['days']) {
+        if (currentDate == rawdata['schedule']['conference']['days'][day]['date']) {
+            currentData = rawdata['schedule']['conference']['days'][day]['rooms'][currentRoom];
+        }
+    }
 }
 
 function readTimeData(data) {
@@ -51,7 +71,6 @@ function readTimeData(data) {
 }
 
 function activePres() {
-    alert("here");
     var datenow = new Date();
     var timenow = datenow.getTime();
 
@@ -61,7 +80,7 @@ function activePres() {
         var endTime = Date.parse(datenow.toDateString()+" "+item['end_time']);
         var ele=document.getElementById("pres_"+index);
         if (timenow > startTime && timenow < endTime) {
-            console.log(":::"+item['ical_id']);
+            console.log(":::"+item['guid']);
             ele.style.background='#ffffff';
             ele.style.border='4px solid red';
         } else {
@@ -74,7 +93,7 @@ function activePres() {
 function dateChange() {
     currentDate = document.getElementById('datechoice').value;
     setCookie("date", currentDate, 100);
-    currentData = rawdata[currentDate]['matrix'];
+    updateCurrentData();
     rendered=[];
     render();
 }
@@ -82,6 +101,7 @@ function dateChange() {
 function roomChange() {
     currentRoom = document.getElementById('roomchoice').value;
     setCookie("room", currentRoom, 100);
+    updateCurrentData();
     rendered=[];
     render();
 }
@@ -91,60 +111,64 @@ function render() {
       "<p style='font-weight:bold;font-size:large;'>PyCon Capture - Schedule Choice</p>"+
       "Date: <select name='date' id='datechoice' onChange='dateChange()'>";
 
-  for (index in rawdata) {
-      if (index == currentDate) {
-          html += "<option value='"+index+"' selected>"+index+"</option>";
+  var rooms = [];
+  for (index in rawdata['schedule']['conference']['days']) {
+      var item = rawdata['schedule']['conference']['days'][index];
+      if (item['date'] == currentDate) {
+          html += "<option value='"+item['date']+"' selected>"+item['date']+"</option>";
+          rooms = rawdata['schedule']['conference']['days'][index]['rooms'];
       } else {
-          html += "<option value='"+index+"'>"+index+"</option>";
+          html += "<option value='"+item['date']+"'>"+item['date']+"</option>";
       }
   }
   html += "</select><br />"+
       "Room: <select name='room' id='roomchoice' onchange='roomChange()'>";
 
-  for (index in rawdata[currentDate]['rooms']) {
-      var item = rawdata[currentDate]['rooms'][index];
-      if (item == currentRoom) {
-          html += "<option value='"+item+"' selected>"+item+"</option>";
+  for (index in rooms) {
+      if (index == currentRoom) {
+          html += "<option value='"+index+"' selected>"+index+"</option>";
       } else {
-          html += "<option value='"+item+"'>"+item+"</option>";
+          html += "<option value='"+index+"'>"+index+"</option>";
       }
   }
 
   html += '</select><br /></div>';
 
   for (index in currentData) {
-    for (index2 in currentData[index]) {
-      var item = currentData[index][index2];
+      var item = currentData[index];
       if (item == null) {
         continue;
       }
-      if (item['room'] == currentRoom && !item['break_event']) {
 
-        rendered[item['ical_id']] = item;
+      rendered[item['guid']] = item;
 
-        var file = '';
-        var startTime = '';
-        var endTime = '';
+      var file = '';
+      var startTime = '';
+      var endTime = '';
 
-        if (timeData.hasOwnProperty(item['ical_id'])) {
-            file = timeData[item['ical_id']]['file'];
-            startTime = timeData[item['ical_id']]['start'];
-            endTime = timeData[item['ical_id']]['end'];
-        }
-
-        html+= "<div id='pres_"+item['ical_id']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
-          "<p class='title'>Title:<div id='title_"+item['ical_id']+"'>"+item['title']+"</div></p>"+
-          "<p>Presenter(s): "+item['name']+"<br />"+
-          "Schedule Time: <span style='font-weight:bold'>"+item['time']+" to "+item['end_time']+"</span><br />"+
-          "ical_id: "+item['ical_id']+"<br />"+
-          "Recording File: <input type='text' id='name_"+item['ical_id']+"' name='name_"+item['ical_id']+"' size='20' value='"+file+"' readonly /><br />"+
-          "Start time index:  <input type='text' id='start_"+item['ical_id']+"' name='start_"+item['ical_id']+"' size='8' value='"+startTime+"' readonly /><br />"+
-          "End time index:  <input type='text' id='end_"+item['ical_id']+"' name='end_"+item['ical_id']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
-          "<a href='javascript:setStart(\""+item['ical_id']+"\")' class='markbutton'>Mark Presentation Start</a>&nbsp;&nbsp;&nbsp;"+
-          "<a href='javascript:setEnd(\""+item['ical_id']+"\")' class='markbutton'>Mark Presentation End</a>"+
-          "</p></div>";
+      if (timeData.hasOwnProperty(item['guid'])) {
+          file = timeData[item['guid']]['file'];
+          startTime = timeData[item['guid']]['start'];
+          endTime = timeData[item['guid']]['end'];
       }
-    }
+
+      var presenters = "";
+      for (pres in item['persons']) {
+          presenters += item['persons'][pres]['public_name']+", ";
+      }
+      presenters = presenters.substring(0, presenters.length-2);
+
+      html+= "<div id='pres_"+item['guid']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
+          "<p class='title'>Title:<div id='title_"+item['guid']+"'>"+item['title']+"</div></p>"+
+          "<p>Presenter(s): "+presenters+"<br />"+
+          "Schedule Time: <span style='font-weight:bold'>"+item['start']+" duration "+item['duration']+"</span><br />"+
+          "guid: "+item['guid']+"<br />"+
+          "Recording File: <input type='text' id='name_"+item['guid']+"' name='name_"+item['guid']+"' size='20' value='"+file+"' readonly /><br />"+
+          "Start time index:  <input type='text' id='start_"+item['guid']+"' name='start_"+item['guid']+"' size='8' value='"+startTime+"' readonly /><br />"+
+          "End time index:  <input type='text' id='end_"+item['guid']+"' name='end_"+item['guid']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
+          "<a href='javascript:setStart(\""+item['guid']+"\")' class='markbutton'>Mark Presentation Start</a><br />"+
+          "<a href='javascript:setEnd(\""+item['guid']+"\")' class='markbutton'>Mark Presentation End</a>"+
+          "</p></div>";
   }
 
   setElementHTML("schedule", html);
