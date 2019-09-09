@@ -80,7 +80,7 @@ function activePres() {
         var endTime = Date.parse(datenow.toDateString()+" "+item['end_time']);
         var ele=document.getElementById("pres_"+index);
         if (timenow > startTime && timenow < endTime) {
-            console.log(":::"+item['guid']);
+            console.log(":::"+item['id']);
             ele.style.background='#ffffff';
             ele.style.border='4px solid red';
         } else {
@@ -140,16 +140,16 @@ function render() {
         continue;
       }
 
-      rendered[item['guid']] = item;
+      rendered[item['id']] = item;
 
       var file = '';
       var startTime = '';
       var endTime = '';
 
-      if (timeData.hasOwnProperty(item['guid'])) {
-          file = timeData[item['guid']]['file'];
-          startTime = timeData[item['guid']]['start'];
-          endTime = timeData[item['guid']]['end'];
+      if (timeData.hasOwnProperty(item['id'])) {
+          file = timeData[item['id']]['file'];
+          startTime = timeData[item['id']]['start'];
+          endTime = timeData[item['id']]['end'];
       }
 
       var presenters = "";
@@ -158,16 +158,17 @@ function render() {
       }
       presenters = presenters.substring(0, presenters.length-2);
 
-      html+= "<div id='pres_"+item['guid']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
-          "<p class='title'>Title:<div id='title_"+item['guid']+"'>"+item['title']+"</div></p>"+
+      html+= "<div id='pres_"+item['id']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
+          "<p class='title'>Title:<div id='title_"+item['id']+"'>"+item['title']+"</div></p>"+
           "<p>Presenter(s): "+presenters+"<br />"+
           "Schedule Time: <span style='font-weight:bold'>"+item['start']+" duration "+item['duration']+"</span><br />"+
-          "guid: "+item['guid']+"<br />"+
-          "Recording File: <input type='text' id='name_"+item['guid']+"' name='name_"+item['guid']+"' size='20' value='"+file+"' readonly /><br />"+
-          "Start time index:  <input type='text' id='start_"+item['guid']+"' name='start_"+item['guid']+"' size='8' value='"+startTime+"' readonly /><br />"+
-          "End time index:  <input type='text' id='end_"+item['guid']+"' name='end_"+item['guid']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
-          "<a href='javascript:setStart(\""+item['guid']+"\")' class='markbutton'>Mark Presentation Start</a><br />"+
-          "<a href='javascript:setEnd(\""+item['guid']+"\")' class='markbutton'>Mark Presentation End</a>"+
+          "id: "+item['id']+"<br />"+
+          "Recording File: <input type='text' id='name_"+item['id']+"' name='name_"+item['id']+"' size='20' value='"+file+"' readonly /><br />"+
+          "Start time index:  <input type='text' id='start_"+item['id']+"' name='start_"+item['id']+"' size='8' value='"+startTime+"' readonly /><br />"+
+          "End time index:  <input type='text' id='end_"+item['id']+"' name='end_"+item['id']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
+          "<input type='hidden' name='seqindexv_"+item['id']+"' id='seqindex_"+item['id']+"' value='"+index+"' />"+
+          "<a href='javascript:setStart(\""+item['id']+"\")' class='markbutton'>Mark Presentation Start</a><br />"+
+          "<a href='javascript:setEnd(\""+item['id']+"\")' class='markbutton'>Mark Presentation End</a>"+
           "</p></div>";
   }
 
@@ -187,7 +188,7 @@ function setStart(id) {
            return;
        }
     }
-    var url="code.py/?id="+id+"&action=start&title="+getTitle(id);
+    var url="code.py/?id="+id+"&action=start&seqindex="+getSeqIndex(id)+"&title="+getTitle(id);
     readJSONURL(url, setStartCallback);
 }
 
@@ -203,7 +204,7 @@ function setEnd(id) {
            return;
        }
     }
-    var url="code.py/?id="+id+"&action=end&title="+getTitle(id);
+    var url="code.py/?id="+id+"&action=end&seqindex="+getSeqIndex(id)+"&title="+getTitle(id);
     readJSONURL(url, setEndCallback);
 }
 
@@ -214,6 +215,10 @@ function setEndCallback(data) {
 
 function getTitle(id) {
     return encodeURIComponent(document.getElementById("title_"+id).innerHTML);
+}
+
+function getSeqIndex(id) {
+    return document.getElementById("seqindex_"+id).value;
 }
 
 function makeFFmpegScript() {

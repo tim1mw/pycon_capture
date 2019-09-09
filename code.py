@@ -42,9 +42,11 @@ class index:
         if data['id'] not in datastore:
             datastore[data['id']] = {}
 
+
         datastore[data['id']][data['action']] = timecode
         datastore[data['id']]['file'] = filename
         datastore[data['id']]['title'] = data['title']
+        datastore[data['id']]['seqindex'] = data['seqindex']
 
         with open("recordings/timedata.json", 'w') as f:
             json.dump(datastore, f, indent=4, sort_keys=True)
@@ -87,11 +89,14 @@ class index:
         for item in datastore:
             # The strip() on the timecode read seems have no effect, but it works when I do it here,
             # so repeat to make sure we have no whitespace junk
+            filename =  datastore[item]['seqindex'] + "_" + item + "_" + datastore[item]['title']
+            filename = self.makeSafeFilename(filename) + ".mp4"
+            
             script += "ffmpeg -i \"" + datastore[item]['file'].strip() + "\""
             script += " -ss " + datastore[item]['start']
             script += " -to " + datastore[item]['end']
             script += " -c copy -async 1"
-            script += " \"" + item + "-" + datastore[item]['title'] + ".mp4\""
+            script += " \"" + filename + "\""
             script += "\n\n"
 
         file = open("recordings/ffmpeg-script.sh", 'w')
@@ -99,6 +104,15 @@ class index:
         file.close()
 
         return json.dumps({"ok": True})
+
+    def makeSafeFilename(self, s):
+        return "".join(self.safeChar(c) for c in s).rstrip("_")
+
+    def safeChar(self, c):
+        if c.isalnum():
+            return c
+        else:
+            return "_"
 
     def getScheduleData(self):
         try:
