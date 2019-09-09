@@ -28,6 +28,11 @@ function readJSONURL(url, callBack) {
         if (this.readyState == 4 && this.status == 404) {
             callBack({});
         }
+        
+        if (this.readyState == 4 && this.status == 500) {
+            alert("500 error calling "+url+" "+this.responseText);
+        }
+        
     };
     xmlhttp.open("GET", url, true);
     xmlhttp.send(); 
@@ -46,6 +51,7 @@ function readTimeData(data) {
 }
 
 function activePres() {
+    alert("here");
     var datenow = new Date();
     var timenow = datenow.getTime();
 
