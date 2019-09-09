@@ -104,7 +104,7 @@ class index:
         try:
             buffer = StringIO()
             c = pycurl.Curl()
-            c.setopt(c.URL, 'https://2018.hq.pyconuk.org/schedule/json/')
+            c.setopt(c.URL, 'https://pretalx.com/pyconuk-2019/schedule/export/schedule.json')
             c.setopt(c.FOLLOWLOCATION, True)
             c.setopt(c.WRITEDATA, buffer)
             c.setopt(c.CAINFO, certifi.where())
