@@ -1,8 +1,9 @@
 <!doctype html>
+<html>
 <head>
     <title>PyCon capture</title>
-    <link href="static/video-js.min.css" rel="stylesheet" />
-    <link href="static/style-cam.css" rel="stylesheet" />
+    <link href="static/video-js.min.css" rel="stylesheet" type="text/css" />
+    <link href="static/style-cam.css" rel="stylesheet" type="text/css"  />
     <script type='text/javascript' src="static/video.min.js"></script>
     <script type='text/javascript'>
 
@@ -15,33 +16,15 @@
     </script>
     <script type='text/javascript' src='config.js'></script>
     <script type='text/javascript' src='manage.js'></script>
-    <style>
-        .markbutton {
-            border: 1px solid grey;
-            background-color: #eeeeee;
-            color: #000000;
-            text-decoration:none;
-            font-weight:bold;
-            font-size:large;
-            padding: 4px;
-        }
-
-        .title {
-            font-weight:bold;
-            font-size:large;
-        }
-    </style>
 </head>
 <body>
 
-
-
 <form>
-<div id="schedule" style="float:left;margin-top:0px;height:630px;width:430px;overflow-y:scroll;overflow-x:auto;border:1px solid black;"></div>
+<div id="schedule" class="schedule"></div>
 </form>
 
-<div style="margin-left:435px;">
-<div>Audio Level: <meter id="vumeter" min="0" max="100" value="0" low="70" high="90" style="width:700px" /></div>
+<div class="main">
+<div>Audio Level: <meter id="vumeter" min="0" max="100" value="0" low="70" high="90" class="meter" /></div>
 <video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444"
     data-setup='{
         "controls": true,
@@ -51,11 +34,11 @@
     <source src="live/video.m3u8" type="application/x-mpegURL">
 </video>
 
-<p style="font-weight:bold">Please note the video monitor has a 10 second lag and is only so you can check the recording is working. The presentation start and stop marks should NOT be done on the basis of the video monitor. Watch the real life presenter! Times can be tweaked later if they are wrong, the recording is continuous so nothing will be lost if you get this wrong. If any are badly out, please make a note of which one(s) it was. The recoding will not stop if you reload this page or stop the playback monitor.</p>
+<p class="instructions">Please note the video monitor has a 10 second lag and is only so you can check the recording is working. The presentation start and stop marks should NOT be done on the basis of the video monitor. Watch the real life presenter! Times can be tweaked later if they are wrong, the recording is continuous so nothing will be lost if you get this wrong. If any are badly out, please make a note of which one(s) it was. The recoding will not stop if you reload this page or stop the playback monitor.</p>
 
-<p style="font-weight:bold">If the audio level stops showing a moving coloured bar, you are not recording any sound. Check the mics are on and USB output level. If the audio level stays stuck in the red for long periods, trim the USB output level a little.</p>
+<p class="instructions">If the audio level stops showing a moving coloured bar, you are not recording any sound. Check the mics are on and USB output level. If the audio level stays stuck in the red for long periods, trim the USB output level a little.</p>
 
-<p><a class="markbutton" href="javascript:makeFFmpegScript()">Generate FFMPEG Script</a></p>
+<div class='buttonblock'><a class="markbutton" href="javascript:makeFFmpegScript()">Generate FFMPEG Script</a></div>
 
 </div>
 </body>

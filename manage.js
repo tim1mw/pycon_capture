@@ -16,7 +16,17 @@ if (rcookie != "") {
 }
 
 readJSONURL("code.py/?action=schedule", setCurrentData);
-initVuMeter();
+
+
+window.addEventListener('DOMContentLoaded', function() {
+    var sideblock = document.getElementById("schedule");
+    sideblock.style.height = (window.innerHeight-25)+"px";
+
+    var vid = document.getElementById("videojs-player");
+    vid.addEventListener("loadedmetadata", startVUMeter);
+});
+
+
 
 
 // Methods
@@ -108,9 +118,10 @@ function roomChange() {
 }
 
 function render() {
-  var html="<div style='padding-top:2px;padding-bottom:6px;margin-top:10px;margin-left:2px;margin-right:2px;margin-bottom:10px;border:2px solid black;'>"+
-      "<p style='font-weight:bold;font-size:large;'>PyCon Capture - Schedule Choice</p>"+
-      "Date: <select name='date' id='datechoice' onChange='dateChange()'>";
+  var html="<div class='headingblock'>"+
+      "<p class='heading'>PyCon Capture - Schedule Choice</p>"+
+      "<table>"+
+      "<tr><td>Date: </td><td><select name='date' id='datechoice' onChange='dateChange()'>";
 
   var rooms = [];
   for (index in rawdata['schedule']['conference']['days']) {
@@ -122,8 +133,8 @@ function render() {
           html += "<option value='"+item['date']+"'>"+item['date']+"</option>";
       }
   }
-  html += "</select><br />"+
-      "Room: <select name='room' id='roomchoice' onchange='roomChange()'>";
+  html += "</select><td></tr>"+
+      "<tr><td>Room:</td><td><select name='room' id='roomchoice' onchange='roomChange()'>";
 
   for (index in rooms) {
       if (index == currentRoom) {
@@ -133,7 +144,7 @@ function render() {
       }
   }
 
-  html += '</select><br /></div>';
+  html += '</select></td></tr></table></div>';
 
   for (index in currentData) {
       var item = currentData[index];
@@ -159,17 +170,19 @@ function render() {
       }
       presenters = presenters.substring(0, presenters.length-2);
 
-      html+= "<div id='pres_"+item['id']+"' style='background:#eeeeee;border:2px solid black;margin:2px;'>"+
-          "<p class='title'>Title:<div id='title_"+item['id']+"'>"+item['title']+"</div></p>"+
-          "<p>Presenter(s): "+presenters+"<br />"+
-          "Schedule Time: <span style='font-weight:bold'>"+item['start']+" duration "+item['duration']+"</span><br />"+
-          "id: "+item['id']+"<br />"+
-          "Recording File: <input type='text' id='name_"+item['id']+"' name='name_"+item['id']+"' size='20' value='"+file+"' readonly /><br />"+
-          "Start time index:  <input type='text' id='start_"+item['id']+"' name='start_"+item['id']+"' size='8' value='"+startTime+"' readonly /><br />"+
-          "End time index:  <input type='text' id='end_"+item['id']+"' name='end_"+item['id']+"' size='8' value='"+endTime+"' readonly /><br /><br />"+
+      html+= "<div id='pres_"+item['id']+"' class='presblock'>"+
+          "<p class='title'><span id='title_"+item['id']+"'>"+item['title']+"</span></p>"+
+          "<table>"+
+          "<tr><td>Presenter(s):</td><td>"+presenters+"</td></tr>"+
+          "<tr><td>Schedule Start:</td><td>"+item['start']+"</td></tr>"+
+          "<tr><td>Schedule Duration:</td><td>"+item['duration']+"</td></tr>"+
+          "<tr><td>ID:</td><td>"+item['id']+"</td></tr>"+
+          "<tr><td>Recording File:</td><td><input type='text' id='name_"+item['id']+"' name='name_"+item['id']+"' size='30' value='"+file+"' readonly /></td></tr>"+
+          "<tr><td>Start time index:</td><td><input type='text' id='start_"+item['id']+"' name='start_"+item['id']+"' size='8' value='"+startTime+"' readonly /></td></tr>"+
+          "<tr><td>End time index:</td><td><input type='text' id='end_"+item['id']+"' name='end_"+item['id']+"' size='8' value='"+endTime+"' readonly /></td></tr></table><br />"+
           "<input type='hidden' name='seqindexv_"+item['id']+"' id='seqindex_"+item['id']+"' value='"+index+"' />"+
-          "<a href='javascript:setStart(\""+item['id']+"\")' class='markbutton'>Mark Presentation Start</a><br />"+
-          "<a href='javascript:setEnd(\""+item['id']+"\")' class='markbutton'>Mark Presentation End</a>"+
+          "<div class='buttonblock'><a href='javascript:setStart(\""+item['id']+"\")' class='markbutton'>Mark Presentation Start</a></div>"+
+          "<div class='buttonblock'><a href='javascript:setEnd(\""+item['id']+"\")' class='markbutton'>Mark Presentation End</a></div>"+
           "</p></div>";
   }
 
@@ -256,13 +269,6 @@ function getCookie(cname) {
         }
     }
     return "";
-}
-
-function initVuMeter() {
-    window.addEventListener('DOMContentLoaded', function() {
-        var vid = document.getElementById("videojs-player");
-        vid.addEventListener("loadedmetadata", startVUMeter);
-    });
 }
 
 function startVUMeter() {
