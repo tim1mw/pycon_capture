@@ -16,6 +16,7 @@ if (rcookie != "") {
 }
 
 readJSONURL("code.py/?action=schedule", setCurrentData);
+initVuMeter();
 
 
 // Methods
@@ -255,4 +256,37 @@ function getCookie(cname) {
         }
     }
     return "";
+}
+
+function initVuMeter() {
+    window.addEventListener('DOMContentLoaded', function() {
+        var vid = document.getElementById("videojs-player");
+        vid.addEventListener("loadedmetadata", startVUMeter);
+    });
+}
+
+function startVUMeter() {
+  var ctx = new AudioContext();
+  var audio = document.getElementById('videojs-player');
+  var audioSrc = ctx.createMediaElementSource(this);
+  var analyser = ctx.createAnalyser();
+  audioSrc.connect(analyser);
+  audioSrc.connect(ctx.destination);
+
+  var frequencyData = new Uint8Array(analyser.frequencyBinCount);
+ 
+  function renderFrame() {
+     requestAnimationFrame(renderFrame);
+
+     analyser.getByteFrequencyData(frequencyData);
+     var values = 0;
+
+     var length = frequencyData.length;
+     for (var i = 0; i < length; i++) {
+         values += (frequencyData[i]);
+         var average = values / length;
+         document.getElementById("vumeter").value = parseInt(average);
+     }
+  }
+  renderFrame();
 }

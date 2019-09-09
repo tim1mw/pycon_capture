@@ -41,6 +41,7 @@
 </form>
 
 <div style="margin-left:435px;">
+<div>Audio Level: <meter id="vumeter" min="0" max="100" value="0" low="70" high="90" style="width:700px" /></div>
 <video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444"
     data-setup='{
         "controls": true,
@@ -51,6 +52,8 @@
 </video>
 
 <p style="font-weight:bold">Please note the video monitor has a 10 second lag and is only so you can check the recording is working. The presentation start and stop marks should NOT be done on the basis of the video monitor. Watch the real life presenter! Times can be tweaked later if they are wrong, the recording is continuous so nothing will be lost if you get this wrong. If any are badly out, please make a note of which one(s) it was. The recoding will not stop if you reload this page or stop the playback monitor.</p>
+
+<p style="font-weight:bold">If the audio level stops showing a moving coloured bar, you are not recording any sound. Check the mics are on and USB output level. If the audio level stays stuck in the red for long periods, trim the USB output level a little.</p>
 
 <p><a class="markbutton" href="javascript:makeFFmpegScript()">Generate FFMPEG Script</a></p>
 
