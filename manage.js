@@ -158,10 +158,12 @@ function render() {
       var startTime = '';
       var endTime = '';
 
-      if (timeData.hasOwnProperty(item['id'])) {
-          file = timeData[item['id']]['file'];
-          startTime = timeData[item['id']]['start'];
-          endTime = timeData[item['id']]['end'];
+      if (timeData.hasOwnProperty(currentDate) &&
+          timeData[currentDate].hasOwnProperty(currentRoom) &&
+          timeData[currentDate][currentRoom].hasOwnProperty(item['id'])) {
+          file = timeData[currentDate][currentRoom][item['id']]['file'];
+          startTime = timeData[currentDate][currentRoom][item['id']]['start'];
+          endTime = timeData[currentDate][currentRoom][item['id']]['end'];
       }
 
       var presenters = "";
@@ -186,6 +188,10 @@ function render() {
           "</p></div>";
   }
 
+  html += "<div class='headingblock'>"+
+      "<p><div class='buttonblock'><a class='markbutton' href='javascript:makeFFmpegScript()'>Generate FFMPEG Script</a></div></p>"+
+      "</div>";
+
   setElementHTML("schedule", html);
   activePres();
 }
@@ -202,7 +208,7 @@ function setStart(id) {
            return;
        }
     }
-    var url="code.py/?id="+id+"&action=start&seqindex="+getSeqIndex(id)+"&title="+getTitle(id);
+    var url="code.py/?id="+id+"&action=start&seqindex="+getSeqIndex(id)+"&room="+currentRoom+"&date="+currentDate+"&title="+getTitle(id);
     readJSONURL(url, setStartCallback);
 }
 
@@ -218,7 +224,7 @@ function setEnd(id) {
            return;
        }
     }
-    var url="code.py/?id="+id+"&action=end&seqindex="+getSeqIndex(id)+"&title="+getTitle(id);
+    var url="code.py/?id="+id+"&action=end&seqindex="+getSeqIndex(id)+"&room="+currentRoom+"&date="+currentDate+"&title="+getTitle(id);
     readJSONURL(url, setEndCallback);
 }
 
@@ -236,13 +242,13 @@ function getSeqIndex(id) {
 }
 
 function makeFFmpegScript() {
-    var url="code.py/?action=ffmpeg";
+    var url="code.py/?action=ffmpeg&room="+currentRoom+"&date="+currentDate+"";
     readJSONURL(url, ffmpegCallback);
 }
 
 function ffmpegCallback(data) {
     if (data['ok']) {
-        alert("FFMPEG Script created");
+        alert("FFMPEG Script created as: "+data['filename']);
     } else {
         alert("Error creating FFMPEG Script");
     }

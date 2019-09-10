@@ -26,7 +26,7 @@ class index:
         if data['action'] == 'start' or data['action'] == 'end':
             return self.saveNewTimeIndex(data)
         if data['action'] == 'ffmpeg':
-            return self.makeFFmpegScript()
+            return self.makeFFmpegScript(data)
         if data['action'] == 'schedule':
             return self.getScheduleData()
 
@@ -39,14 +39,21 @@ class index:
 
         datastore = self.readTimecodeJSON()
 
-        if data['id'] not in datastore:
-            datastore[data['id']] = {}
+        if data['date'] not in datastore:
+            datastore[data['date']] = {}
+            
+        if data['room'] not in datastore[data['date']]:
+            datastore[data['date']][data['room']] = {}
+
+        if data['id'] not in datastore[data['date']][data['room']]:
+            datastore[data['date']][data['room']][data['id']] = {}
 
 
-        datastore[data['id']][data['action']] = timecode
-        datastore[data['id']]['file'] = filename
-        datastore[data['id']]['title'] = data['title']
-        datastore[data['id']]['seqindex'] = data['seqindex']
+        datastore[data['date']][data['room']][data['id']][data['action']] = timecode
+        datastore[data['date']][data['room']][data['id']]['file'] = filename
+        datastore[data['date']][data['room']][data['id']]['title'] = data['title']
+        datastore[data['date']][data['room']][data['id']]['seqindex'] = data['seqindex']
+        datastore[data['date']][data['room']][data['id']]['room'] = data['seqindex']
 
         with open("recordings/timedata.json", 'w') as f:
             json.dump(datastore, f, indent=4, sort_keys=True)
@@ -83,27 +90,34 @@ class index:
 
         return {}
 
-    def makeFFmpegScript(self):
+    def makeFFmpegScript(self, data):
         datastore = self.readTimecodeJSON()
-        script = ""
-        for item in datastore:
+        
+        if data['date'] not in datastore or data['room'] not in datastore[data['date']]:
+            return
+        
+        roomdata = datastore[data['date']][data['room']]
+        
+        script = "#!/bin/bash\n\n"
+        for item in roomdata:
             # The strip() on the timecode read seems have no effect, but it works when I do it here,
             # so repeat to make sure we have no whitespace junk
-            filename =  datastore[item]['seqindex'] + "_" + item + "_" + datastore[item]['title']
+            filename = roomdata[item]['seqindex'] + "_" + item + "_" + roomdata[item]['title']
             filename = self.makeSafeFilename(filename) + ".mp4"
             
-            script += "ffmpeg -i \"" + datastore[item]['file'].strip() + "\""
-            script += " -ss " + datastore[item]['start']
-            script += " -to " + datastore[item]['end']
+            script += "ffmpeg -i \"" + roomdata[item]['file'].strip() + "\""
+            script += " -ss " + roomdata[item]['start']
+            script += " -to " + roomdata[item]['end']
             script += " -c copy -async 1"
             script += " \"" + filename + "\""
             script += "\n\n"
 
-        file = open("recordings/ffmpeg-script.sh", 'w')
+        scriptfile = self.makeSafeFilename(data['date']) + "-" + self.makeSafeFilename(data['room'])+"-ffmpeg.sh"
+        file = open("recordings/" + scriptfile, 'w')
         file.write(script)
         file.close()
 
-        return json.dumps({"ok": True})
+        return json.dumps({"ok": True, "filename": scriptfile})
 
     def makeSafeFilename(self, s):
         return "".join(self.safeChar(c) for c in s).rstrip("_")
