@@ -77,8 +77,8 @@ class index:
         return {}
 
     def readScheduleJSON(self):
-        if os.path.exists("recordings/schedule.json"):
-            jsondatafile = open("recordings/schedule.json", "r")
+        if os.path.exists("data/schedule.json"):
+            jsondatafile = open("data/schedule.json", "r")
             return json.loads(jsondatafile.read())
 
         return {}
@@ -124,16 +124,16 @@ class index:
             c.setopt(c.CAINFO, certifi.where())
             c.perform()
             c.close()
-
+        
             schedule = buffer.getvalue()
-            file = open("recordings/schedule.json", 'w')
+            file = open("data/schedule.json", 'w')
             file.write(schedule)
             file.close()
             return schedule
         except Exception as e:
             print e
             print("Using cached schedule...")
-            schedulecache = open("recordings/schedule.json", 'r')
+            schedulecache = open("data/schedule.json", 'r')
             return schedulecache.read()
 
 

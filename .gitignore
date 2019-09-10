@@ -2,6 +2,7 @@
 *.ts
 live/*
 recordings/*
+data/*
 config.js
 web scraper/files/*
 *.db
