@@ -97,15 +97,18 @@ class index:
             return
         
         roomdata = datastore[data['date']][data['room']]
+        basedir = "processed/"+self.makeSafeFilename(data['date'])+"-"+self.makeSafeFilename(data['room'])
         
         script = "#!/bin/bash\n\n"
+        script += "mkdir "+basedir+"\n\n"
+        
         for item in roomdata:
             # The strip() on the timecode read seems have no effect, but it works when I do it here,
             # so repeat to make sure we have no whitespace junk
             filename = roomdata[item]['seqindex'] + "_" + item + "_" + roomdata[item]['title']
-            filename = self.makeSafeFilename(filename) + ".mp4"
+            filename = basedir + "/" + self.makeSafeFilename(filename) + ".mp4"
             
-            script += "ffmpeg -i \"" + roomdata[item]['file'].strip() + "\""
+            script += "ffmpeg -i \"raw/" + roomdata[item]['file'].strip() + "\""
             script += " -ss " + roomdata[item]['start']
             script += " -to " + roomdata[item]['end']
             script += " -c copy -async 1"

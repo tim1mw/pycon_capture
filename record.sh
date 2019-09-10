@@ -31,4 +31,4 @@ ffmpeg -f pulse -i $AUDIO_DEV \
  -bsf:v h264_mp4toannexb \
  -movflags empty_moov+omit_tfhd_offset+frag_keyframe+default_base_moof \
  -segment_list_flags +live -hls_allow_cache 0  -hls_time 1  -hls_wrap 50 \
- -f tee  -map 0:0 -map 1:0 "live/video.m3u8|recordings/$filename"
+ -f tee  -map 0:0 -map 1:0 "live/video.m3u8|recordings/raw/$filename"
