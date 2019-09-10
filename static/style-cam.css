@@ -7,11 +7,11 @@
 
 .buttonblock {
     border: 2px solid #ff4444;
-    background-color: #111111;
+    background-color: #333333;
     padding-top: 8px;
     padding-bottom: 8px;
-    padding-left:2px;
-    padding-right:2px;
+    padding-left:3px;
+    padding-right:3px;
     margin:1px;
     display:inline;
     border-radius: 6px;
@@ -48,8 +48,16 @@
     width:700px;
 }
 
+.meterblock {
+    text-align:center;
+    margin-bottom:10px;
+    font-weight:bold;
+}
+
 .instructions {
     font-weight:bold;
+    margin-left:10px;
+    margin-right:10px;
 }
 
 .headingblock {
@@ -67,4 +75,16 @@
     font-size:large;
     text-align:center;
     margin-top:0px;
+}
+
+.video-js {
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.vidblock {
+    color:white;
+    background:black;
+    padding-bottom:20px;
+    padding-top:10px;
 }
