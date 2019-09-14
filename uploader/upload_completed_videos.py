@@ -22,7 +22,7 @@ CONFIG_HOME = '.pycon_capture'
 CONFIG_FILE = 'pycon_capture.yml'
 
 # TODO: All these constants need to be read from the configuration file above
-SCHEDULE_URL = 'https://2018.hq.pyconuk.org/schedule/json/'
+SCHEDULE_URL = 'https://pretalx.com/pyconuk-2019/schedule/export/schedule.json' # formerley 'https://2018.hq.pyconuk.org/schedule/json/'
 VIDEO_FILE_ROOT = '/usr/local/src/pycon/videos'
 VIDEO_FILE_EXTENSION = 'mp4'
 
@@ -149,36 +149,43 @@ class ScheduleData:
                 return False
 
         def parse_one_event(one_day, one_event):
-            parsed_event = {
-                'id': one_event.get('id', ''),
+            parsed_event = { # TODO remap this
+                'id': one_event.get('guid', ''), # could also use 'id'
                 'title': one_event.get('title', ''),
-                'speaker': one_event.get('name', ''),
+                'speaker': one_event.get('name', ''), # ["persons"][0-n]["public_name"]
                 'subtitle': one_event.get('subtitle', ''),
-                'new_programmers': one_event.get('aimed_at_new_programmers', ''),
-                'teachers': one_event.get('aimed_at_teachers', ''),
-                'data_scientists': one_event.get('aimed_at_data_scientists', ''),
+                'new_programmers': one_event.get('aimed_at_new_programmers', ''), #not present
+                'teachers': one_event.get('aimed_at_teachers', ''), #not present
+                'data_scientists': one_event.get('aimed_at_data_scientists', ''), # not present
                 'description': one_event.get('description', ''),
-                'ical_id': one_event.get('ical_id', ''),
+                'ical_id': one_event.get('ical_id', ''), # id? otherwise not used
                 'room': one_event.get('room', ''),
                 'track': one_event.get('track', ''),
-                'day_date': one_day,
-                'start_time': one_event.get('time', ''),
-                'end_time': one_event.get('end_time', '')
+                'day_date': one_day, # name of day?
+                'start_time': one_event.get('time', ''), # start
+                'end_time': one_event.get('end_time', '') # start + duration?
             }
             return parsed_event
 
         parsed_schedule = {}
-        for day in self.raw_schedule:
-            day_data = self.raw_schedule[day]
+        ## here we parse json
+        #self.raw_schedule["schedule"]["conference"]["days"]
+        days = self.raw_schedule["schedule"]["conference"]["days"]
+        days.sort(key=lambda d: d["index"])
+        for day in days:
+            for room in day["rooms"].values():
+                for event in room:
+                    parsed_schedule["guid"] = parse_one_event(event)
+            # day_data = self.raw_schedule[day]
             # We don't need to parse these, but leave the code in case we want it later
             # time_lookup = get_times(day_data['times'])
             # room_lookup = get_rooms(day_data['rooms'])
-            for time_number in range(len(day_data['matrix'])):
-                event_list = day_data['matrix'][time_number]
-                for event_index in range(len(event_list)):
-                    if interesting_event(event_list[event_index]):
-                        parsed_schedule[event_list[event_index]['id'].lower()] = \
-                            parse_one_event(day, event_list[event_index])
+            # for time_number in range(len(day_data['matrix'])):
+            #     event_list = day_data['matrix'][time_number]
+            #     for event_index in range(len(event_list)):
+            #         if interesting_event(event_list[event_index]):
+            #             parsed_schedule[event_list[event_index]['id'].lower()] = \
+            #                 parse_one_event(day, event_list[event_index])
         return parsed_schedule
 
     def get_upload_details(self, event_id):

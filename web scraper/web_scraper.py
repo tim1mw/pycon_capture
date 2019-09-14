@@ -12,10 +12,11 @@ import os
 from os.path import isfile, join
 import sqlite3
 
-def unicodetoascii(text): # should probably sort encoding out rather than do this
+
+def unicodetoascii(text):  # should probably sort encoding out rather than do this
 
     TEXT = (text.
-    		replace('\\xe2\\x80\\x99', "'").
+            replace('\\xe2\\x80\\x99', "'").
             replace('\\xc3\\xa9', 'e').
             replace('\\xe2\\x80\\x90', '-').
             replace('\\xe2\\x80\\x91', '-').
@@ -45,36 +46,35 @@ def unicodetoascii(text): # should probably sort encoding out rather than do thi
             replace("\\'", "'").  # un-escape single quotes/apostrophes
             replace("\\r", "\r").
             replace("\\n", "\n").
-            replace('\\xe2\\x80\\x99', "'").# why wasnt this one already included?
+            replace('\\xe2\\x80\\x99', "'").  # why wasnt this one already included?
             replace("\\xc2\\xa0", " ")
 
-    # leave these to be replaced in uploader, as it makes it easier to edit if we cant pass params
+            # leave these to be replaced in uploader, as it makes it easier to edit if we cant pass params
 
+            #        replace("\\xc3\\xa4", "ä"). # can you pass these as a param?
+            #        replace("\\xc5\\x81", "Ł").
+            #        replace("\\xc4\\x85", "ą").
+            #        replace("\\xc3\\xa1", "á").
+            #        replace("\\xc2\\xa3", "£").
+            #        replace("\\xc3\\xb6", "ö").
+            #        replace("\\xc3\\xa7", "ç").
+            #        replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
+            #        replace("\\xc4\\xb1", "ı"). # dotless i
+            #        replace("\\xc5\\xa1", "š")
 
-    #        replace("\\xc3\\xa4", "ä"). # can you pass these as a param?
-    #        replace("\\xc5\\x81", "Ł").
-    #        replace("\\xc4\\x85", "ą").
-    #        replace("\\xc3\\xa1", "á").
-    #        replace("\\xc2\\xa3", "£").
-    #        replace("\\xc3\\xb6", "ö").
-    #        replace("\\xc3\\xa7", "ç").
-    #        replace("\\xe2\\x84\\xa2", "™"). # trademark (can replace with tm if theres a problem)
-    #        replace("\\xc4\\xb1", "ı"). # dotless i
-    #        replace("\\xc5\\xa1", "š")
-
-    )
-    if "\\" in TEXT: # print them for info
-        #TEXT = TEXT.decode("utf8")
-        if "\\xc3\\xa4" in TEXT\
-        or "\\xc5\\x81" in TEXT\
-        or "\\xc4\\x85" in TEXT\
-        or "\\xc3\\xa1" in TEXT\
-        or "\\xc2\\xa3" in TEXT\
-        or "\\xc3\\xb6" in TEXT\
-        or "\\xc3\\xa7" in TEXT\
-        or "\\xc4\\xb1" in TEXT\
-        or "\\xc5\\xa1" in TEXT\
-        or "\\xe2\\x84\\xa2" in TEXT:
+            )
+    if "\\" in TEXT:  # print them for info
+        # TEXT = TEXT.decode("utf8")
+        if "\\xc3\\xa4" in TEXT \
+                or "\\xc5\\x81" in TEXT \
+                or "\\xc4\\x85" in TEXT \
+                or "\\xc3\\xa1" in TEXT \
+                or "\\xc2\\xa3" in TEXT \
+                or "\\xc3\\xb6" in TEXT \
+                or "\\xc3\\xa7" in TEXT \
+                or "\\xc4\\xb1" in TEXT \
+                or "\\xc5\\xa1" in TEXT \
+                or "\\xe2\\x84\\xa2" in TEXT:
             pass
         else:
             print(TEXT)
@@ -83,15 +83,15 @@ def unicodetoascii(text): # should probably sort encoding out rather than do thi
 
 
 def get_talk_page(href):
-    my_file = Path("files/"+href[15:19]+"_"+href[20:])
+    my_file = Path("files/" + href[15:19] + "_" + href[20:])
     if not my_file.is_file():
-        print("files/"+href[15:19] +"_"+href[20:] + " New File")
+        print("files/" + href[15:19] + "_" + href[20:] + " New File")
         href_page = requests.get(base_url + href[:19])
-        with open("files/"+href[15:19]+"_"+href[20:], 'w') as page:
+        with open("files/" + href[15:19] + "_" + href[20:], 'w') as page:
             page.write(str(href_page.content))
         # time.sleep(1)
     else:
-        print("File: "+"files/"+href[15:19]+"_"+href[20:]+" exists. Skipping...")
+        print("File: " + "files/" + href[15:19] + "_" + href[20:] + " exists. Skipping...")
 
 
 def parse_talk_page(input_data, room):
@@ -155,10 +155,10 @@ def parse_talk_page(input_data, room):
     # Beginning programmers and data scientist section
     difficulty_flags = ""
     ul = talk_page.select("ul")
-    if len(ul) <2:
+    if len(ul) < 2:
         ul = ""
     else:
-        ul = ul[1].select("li") # list of <li>, (one or more)
+        ul = ul[1].select("li")  # list of <li>, (one or more)
 
         for li in ul:
             difficulty_flags += li.text
@@ -173,19 +173,21 @@ def parse_talk_page(input_data, room):
     # room
     # room =  "" # room is not on talk page, only on schedule
 
-    #print("**************")
-    #print(file)
-    #print(title)
-    #print(subtitle)
-    #print(authors)
-    #print(slot_list)
-    #print(proposal_type)
-    #print(abstract_text)
+    # print("**************")
+    # print(file)
+    # print(title)
+    # print(subtitle)
+    # print(authors)
+    # print(slot_list)
+    # print(proposal_type)
+    # print(abstract_text)
     # print(ul)
-    #if difficulty_flags:
+    # if difficulty_flags:
     #    print(difficulty_flags.strip())
 
-    return [file, title, subtitle, authors, room, day_field, time_field, slot_list, proposal_type, abstract_text, difficulty_flags.strip()]
+    return [file, title, subtitle, authors, room, day_field, time_field, slot_list, proposal_type, abstract_text,
+            difficulty_flags.strip()]
+
 
 print("Downloads PyconUK schedule page")
 print("then downloads every talk page to its own file.")
@@ -199,10 +201,9 @@ if not os.path.exists("./files/"):
 
 time.sleep(1)
 
-
 base_url = "https://2018.hq.pyconuk.org/"
 
-page = requests.get(base_url+"schedule/")
+page = requests.get(base_url + "schedule/")
 
 print(page.status_code)
 # print(page.content)
@@ -215,8 +216,8 @@ hrefs = []
 for td in soup.find_all('td', class_='selectable-schedule '):
     # td.find("a")
     room_name = td.find("span").text
-    hrefs.append(td.find("a")['href']+(room_name.replace(" ","-")))
-    print(td.find("a")['href']+(room_name.replace(" ","-")))
+    hrefs.append(td.find("a")['href'] + (room_name.replace(" ", "-")))
+    print(td.find("a")['href'] + (room_name.replace(" ", "-")))
     # print(td.find("span").text)
 
 deduped_hrefs = list(set(hrefs))  # converts to set and back to remove dupes (dupes are not talks?)
@@ -250,26 +251,25 @@ cursor.execute('''
     difficulty_flags TEXT)
 ''')
 db.commit()
-#db.close()
+# db.close()
 
 for file in onlyfiles:
     with open("files/" + file, 'r') as data:
-        #print(file)
-        row = parse_talk_page(data, file[5:].replace("-"," "))
-        print (file[5:].replace("-"," "))
+        # print(file)
+        row = parse_talk_page(data, file[5:].replace("-", " "))
+        print(file[5:].replace("-", " "))
         # TODO zip
 
         for slot in row[7]:
             cursor.execute('''INSERT INTO schedule(file, title,
                             subtitle, authors, room, day_field, time_field, slot_list, proposal_type, abstract_text, difficulty_flags)
                           VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)''',
-                       (row[0], unicodetoascii(row[1]),
-                        unicodetoascii(row[2]), unicodetoascii(row[3]),
-                        row[4], slot.split(",")[0],
-                        slot.split(",")[1], "\n".join(row[7]),
-                        row[8], unicodetoascii(row[9]),
-                        row[10]))
-
+                           (row[0], unicodetoascii(row[1]),
+                            unicodetoascii(row[2]), unicodetoascii(row[3]),
+                            row[4], slot.split(",")[0],
+                            slot.split(",")[1], "\n".join(row[7]),
+                            row[8], unicodetoascii(row[9]),
+                            row[10]))
 
 db.commit()
 db.close()
