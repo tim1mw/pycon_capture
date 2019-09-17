@@ -294,9 +294,15 @@ class ReadyVideos:
         def get_id_from_name(file_name):
             # We want a name that is at least xxxx.ext long
             # More precisely, we should strip the extension and check for 4 characters
+
+            # new file naming convention - split on underscores
+
             if len(file_name) < 8:
                 return None
-            return file_name[:4].lower()
+
+            underscore_sections = file_name.split("_")
+            # return file_name[:4].lower()
+            return underscore_sections[1]
 
         def move_one_file(the_file, from_dir, to_dir):
             try:
