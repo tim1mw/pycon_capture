@@ -107,7 +107,7 @@ class ScheduleData:
 
     def read_schedule_data(self):
 
-        if captive_portal():
+        if self.captive_portal():
             # launch browser to click through captive portal
             print("ERROR: REIDRECT DETECTED -- CONNECT TO CAPTIVE PORTAL AND RE-RUN SCRIPT")
             sys.exit(-2)
