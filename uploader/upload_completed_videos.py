@@ -148,22 +148,34 @@ class ScheduleData:
             except IndexError:
                 return False
 
+        def list_of_speakers(one_event):
+            string_of_speakers = ''
+
+            for person in one_event["persons"]:
+                for day in days:
+                    for room in day["rooms"].values():
+                        for event in room:
+                            for person in event["persons"]:
+                                string_of_speakers += person["public_name"] + ", "
+            return string_of_speakers[:-2] # slice to remove the ", " from the last name in the list
+
+
         def parse_one_event(one_day, one_event):
-            parsed_event = { # TODO remap this
-                'id': one_event.get('guid', ''), # could also use 'id'
+            parsed_event = {
+                'id': one_event.get('id', ''), # could also use 'guid'
                 'title': one_event.get('title', ''),
-                'speaker': one_event.get('name', ''), # ["persons"][0-n]["public_name"]
+                'speaker': list_of_speakers(one_event),  # speaker is a list of speaker objects parsed elsewhere.
                 'subtitle': one_event.get('subtitle', ''),
-                'new_programmers': one_event.get('aimed_at_new_programmers', ''), #not present
-                'teachers': one_event.get('aimed_at_teachers', ''), #not present
-                'data_scientists': one_event.get('aimed_at_data_scientists', ''), # not present
+                #'new_programmers': one_event.get('aimed_at_new_programmers', ''), #not present
+                #'teachers': one_event.get('aimed_at_teachers', ''), #not present
+                #'data_scientists': one_event.get('aimed_at_data_scientists', ''), # not present
                 'description': one_event.get('description', ''),
-                'ical_id': one_event.get('ical_id', ''), # id? otherwise not used
+                #'ical_id': one_event.get('ical_id', ''), # id? otherwise not used
                 'room': one_event.get('room', ''),
                 'track': one_event.get('track', ''),
                 'day_date': one_day, # name of day?
                 'start_time': one_event.get('time', ''), # start
-                'end_time': one_event.get('end_time', '') # start + duration?
+                #'end_time': one_event.get('end_time', '') # start + duration?
             }
             return parsed_event
 
@@ -175,7 +187,8 @@ class ScheduleData:
         for day in days:
             for room in day["rooms"].values():
                 for event in room:
-                    parsed_schedule["guid"] = parse_one_event(event)
+                    temp = parse_one_event(event)
+                    parsed_schedule[temp["id"]] = temp
             # day_data = self.raw_schedule[day]
             # We don't need to parse these, but leave the code in case we want it later
             # time_lookup = get_times(day_data['times'])
