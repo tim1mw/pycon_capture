@@ -187,7 +187,7 @@ class ScheduleData:
         for day in days:
             for room in day["rooms"].values():
                 for event in room:
-                    temp = parse_one_event(event)
+                    temp = parse_one_event(event["date"], event)
                     parsed_schedule[temp["id"]] = temp
             # day_data = self.raw_schedule[day]
             # We don't need to parse these, but leave the code in case we want it later
