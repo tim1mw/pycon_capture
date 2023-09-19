@@ -2,7 +2,6 @@
     color: #ffffff;
     text-decoration:none;
     font-weight:bold;
-    font-size:large;
 }
 
 .buttonblock {
@@ -13,7 +12,6 @@
     padding-left:3px;
     padding-right:3px;
     margin:1px;
-    display:inline;
     border-radius: 6px;
 }
 
