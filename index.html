@@ -5,17 +5,16 @@
     <link href="static/video-js.min.css" rel="stylesheet" type="text/css" />
     <link href="static/style-cam.css" rel="stylesheet" type="text/css"  />
     <script type='text/javascript' src="static/video.min.js"></script>
-    <script type='text/javascript'>
-
-        videojs.Hls.GOAL_BUFFER_LENGTH = 6;
-        videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
-
-        window.addEventListener("load", function () {
-            player = videojs('videojs-player');
-        });
-    </script>
     <script type='text/javascript' src='config.js'></script>
     <script type='text/javascript' src='manage.js'></script>
+    <script type='text/javascript'>
+
+        //videojs.Hls.GOAL_BUFFER_LENGTH = 6;
+        //videojs.Hls.MAX_GOAL_BUFFER_LENGTH = 20;
+
+
+    </script>
+
 </head>
 <body>
 
@@ -24,9 +23,9 @@
 </form>
 
 <div class="main">
-    <div class="vidblock">
+    <div class="vidblock" style="width:790px;margin-left:auto;margin-right:auto;">
         <div class="meterblock">Audio Level: <meter id="vumeter" min="0" max="100" value="0" low="70" high="90" class="meter" /></div>
-        <video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444"
+        <video id="videojs-player" class="video-js vjs-default-skin vjs-big-play-centered" width="790" height="444" 
             data-setup='{
                 "controls": true,
                 "autoplay": false,

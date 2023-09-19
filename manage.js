@@ -4,6 +4,7 @@ var timeData={};
 var rendered=[];
 var currentDate = "";
 var currentRoom = "";
+var player;
 
 var dcookie = getCookie("date");
 if (dcookie != "") {
@@ -17,13 +18,18 @@ if (rcookie != "") {
 
 readJSONURL("code.py/?action=schedule", setCurrentData);
 
+window.addEventListener("load", function () {
+    player = videojs('videojs-player');
+    player.on("play", startVUMeter);
+});
 
 window.addEventListener('DOMContentLoaded', function() {
+console.log("here");
     var sideblock = document.getElementById("schedule");
     sideblock.style.height = (window.innerHeight-25)+"px";
 
-    var vid = document.getElementById("videojs-player");
-    vid.addEventListener("loadedmetadata", startVUMeter);
+    //var vid = document.getElementById("videojs-player");
+    //vid.addEventListener("loadedmetadata", startVUMeter);
 });
 
 
@@ -279,11 +285,12 @@ function getCookie(cname) {
 
 function startVUMeter() {
   var ctx = new AudioContext();
-  var audio = document.getElementById('videojs-player');
-  var audioSrc = ctx.createMediaElementSource(this);
+  var audio = document.getElementsByTagName('video')[0];
+  var audioSrc = ctx.createMediaElementSource(audio);
   var analyser = ctx.createAnalyser();
   audioSrc.connect(analyser);
   audioSrc.connect(ctx.destination);
+
 
   var frequencyData = new Uint8Array(analyser.frequencyBinCount);
  
