@@ -103,6 +103,8 @@ class index:
         script += "mkdir "+basedir+"\n\n"
         
         for item in roomdata:
+            if "start" not in roomdata[item] or "end" not in roomdata[item]:
+                continue
             # The strip() on the timecode read seems have no effect, but it works when I do it here,
             # so repeat to make sure we have no whitespace junk
             filename = roomdata[item]['seqindex'] + "_" + item + "_" + roomdata[item]['title']
