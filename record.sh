@@ -14,14 +14,14 @@ rm -f recordings/current.txt
 echo $filename > recordings/current.txt
 
 
-ffmpeg -f pulse -i $AUDIO_DEV \
+ffmpeg -f pulse -i "$AUDIO_DEV" \
   -f v4l2 -framerate 25 -input_format mjpeg -video_size 1920x1080 \
  -thread_queue_size 512  \
  -itsoffset $AVOFFSET \
  -i $VIDEO_DEV \
  -thread_queue_size 512  \
  -i images/logo.png \
- -vcodec libx264 -vb 12000k -acodec aac \
+ -vcodec libx264 -vb 8500k -acodec aac \
  -x264-params keyint=25:scenecut=0 \
  -preset ultrafast \
  -filter_complex "overlay=0:0" \
