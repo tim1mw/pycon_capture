@@ -4,7 +4,6 @@ import web
 import json
 import pycurl
 import certifi
-from StringIO import StringIO
 from subprocess import Popen, PIPE
 
 
@@ -70,9 +69,9 @@ class index:
             return out.decode("utf-8").strip()
 
         except Exception as inst:
-            print type(inst)     # the exception instance
-            print inst.args      # arguments stored in .args
-            print inst           # __str__ allows args to be printed directly
+            print (type(inst))     # the exception instance
+            print (inst.args)      # arguments stored in .args
+            print (inst)           # __str__ allows args to be printed directly
 
         return "--:--:--"
 
@@ -134,26 +133,8 @@ class index:
             return "_"
 
     def getScheduleData(self):
-        try:
-            buffer = StringIO()
-            c = pycurl.Curl()
-            c.setopt(c.URL, 'https://pretalx.com/pyconuk-2023/schedule/export/schedule.json')
-            c.setopt(c.FOLLOWLOCATION, True)
-            c.setopt(c.WRITEDATA, buffer)
-            c.setopt(c.CAINFO, certifi.where())
-            c.perform()
-            c.close()
-        
-            schedule = buffer.getvalue()
-            file = open("data/schedule.json", 'w')
-            file.write(schedule)
-            file.close()
-            return schedule
-        except Exception as e:
-            print e
-            print("Using cached schedule...")
-            schedulecache = open("data/schedule.json", 'r')
-            return schedulecache.read()
+        schedulecache = open("data/schedule.json", 'r')
+        return schedulecache.read()
 
 
 if __name__ == "__main__":
