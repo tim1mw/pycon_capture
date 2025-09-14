@@ -1,10 +1,14 @@
 import os
 import sys
-import web
+
 import json
 import pycurl
 import certifi
 from subprocess import Popen, PIPE
+
+file_dir = os.path.dirname(__file__)
+sys.path.append(file_dir)
+import web
 
 
 os.environ['http_proxy'] = ''
