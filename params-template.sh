@@ -7,9 +7,6 @@ export VIDEO_DEV="/dev/video1"
 export AUDIO_DEV="default"
 
 # A/V offset
-export AVOFFSET="1.1"
-
-# A/V offset
 export AVOFFSET="0"
 
 # Frames per second
